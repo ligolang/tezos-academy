@@ -5,7 +5,7 @@ type coordinates = {
     z : int
 }
 
-let earth_coordinates : coordinates = 
+let earth_coordinates : coordinates =
 {
     x = 2;
     y = 7;

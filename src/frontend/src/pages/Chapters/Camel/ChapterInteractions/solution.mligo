@@ -15,12 +15,12 @@ let orders (action, store : unit * storage): return =
       match (Tezos.get_contract_opt(right_laser_address) : parameter contract option) with
         Some (contract) -> contract
       | None -> (failwith ("Contract not found.") : parameter contract) in
-      
+
     let left_laser : parameter contract =
       match (Tezos.get_contract_opt(left_laser_address) : parameter contract option) with
         Some (contract) -> contract
       | None -> (failwith ("Contract not found.") : parameter contract) in
-      
+
     // Type your solution below
     let operations : operation list = [
         Tezos.transaction (Fire 5) 0tez right_laser;
