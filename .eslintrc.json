@@ -1,6 +1,5 @@
 {
   "root": true,
-  // "parser": "babel-eslint",
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
@@ -21,11 +20,11 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    //"plugin:@typescript-eslint/recommended-requiring-type-checking"
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
     "standard",
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended",
-    "prettier/@typescript-eslint", // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+    "prettier/@typescript-eslint",
     "plugin:prettier/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
@@ -43,7 +42,7 @@
   },
   "plugins": ["@typescript-eslint/eslint-plugin", "import", "prettier", "standard", "react", "jsx-a11y", "security"],
   "rules": {
-    //"no-unused-variable": "warn",
+    "no-unused-variable": "warn",
     "import/no-unresolved": "error",
     "import/named": "error",
     "import/namespace": "error",
