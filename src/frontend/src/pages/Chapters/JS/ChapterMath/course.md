@@ -1,19 +1,19 @@
 # Chapter 4 : Math
 
 <dialog character="scientist">Hello, I'm Dr Zod, I hope you didn't sleep during your Math class in the academy because you're gonna need it! Your ship needs at least 1.21 gigawatts to function properly. Battery packs are 0.16 gigawatts per unit. How many battery packs do you need? Seems easy, right? Well, no, because the system doesn't run floating point numbers, so... good luck with that!</dialog>
- 
+
 LIGO offers three built-in numerical types:
 
 - _int_ are integers, such as 10, -6 and 0. But there is only one canonical zero: 0 (so, for instance, -0 and 00 are invalid).
 
-- _nat_ are natural numbers (integral numbers greater than or equal to zero). They are followed by follwed by the annotation _as nat_ such as 3 _as nat_, 12 _as nat_ and 0 _as nat_ for the natural zero. The same restriction on zero as integers applies: 0 _as nat_ is the only way to specify the natural zero.
+- _nat_ are natural numbers (integral numbers greater than or equal to zero). They are followed by the annotation _as nat_ such as 3 _as nat_, 12 _as nat_ and 0 _as nat_ for the natural zero. The same restriction on zero as integers applies: 0 _as nat_ is the only way to specify the natural zero.
 
 - _tez_ are units of measure of Tezos tokens. They can be decimals and are followed by annotation _tez_ such as 3 _as tez_. You can also type units of millionth of tez, using the annotation _as mutez_ after a natural literal, such as 10000 _as mutez_ or _0 as mutez_.
 
 ⚠️ Notice there are no floating point types in LIGO as they are not determinist in hardware modules.
 
 <!-- prettier-ignore -->
-ℹ️Large integral values can be expressed using underscores to separate groups of digits, like 1\_000 _as mutez_ or 0.000\_004 _as tez_. Notice 1 _as tez_ = 1\_000\_000 _as mutez_.
+ℹ️ Large integral values can be expressed using underscores to separate groups of digits, like 1\_000 _as mutez_ or 0.000\_004 _as tez_. Notice 1 _as tez_ = 1\_000\_000 _as mutez_.
 
 ## Addition
 
@@ -22,10 +22,8 @@ Addition in LIGO is accomplished by means of the + infix operator. Some type con
 ```
 let a: int = 5 + 10; // int + int yields int
 let b: int = (5 as nat) + 10; // nat + int yields int
-let c: tez = (5 as mutez) + (1 as tez); // tez + tez yields tez
-// let d : tez = (5 as mutez) + (10 as nat); // tez + int or tez + nat is invalid:
+let c: tez = (5 as mutez) + (0.000_010 as tez); // tez + tez yields tez
 let e: nat = (5 as nat) + (10 as nat); // two nats yield a nat
-// let f : nat = (5 as nat) + 10; // nat + int yields an int: invalid
 ```
 
 ⚠️ You cannot add a tez and a int.
@@ -44,7 +42,6 @@ Subtractions follow the same principles.
 ```
 let a: int = 5 - 10;
 let b: int = (5 as nat) - (2 as nat); // Subtraction of two nats yields an int
-// let c : nat = (5 as nat) - (2 as nat); // Therefore the following is invalid
 let d: tez = (5 as mutez) - (1 as mutez);
 ```
 

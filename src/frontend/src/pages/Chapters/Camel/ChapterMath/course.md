@@ -1,7 +1,7 @@
 # Chapter 4 : Math
 
 <dialog character="scientist">Hello, I'm Dr Zod, I hope you didn't sleep during your Math class in the academy because you're gonna need it! Your ship needs at least 1.21 gigawatts to function properly. Battery packs are 0.16 gigawatts per unit. How many battery packs do you need? Seems easy, right? Well, no, because the system doesn't run floating point numbers, so... good luck with that!</dialog>
- 
+
 LIGO offers three built-in numerical types:
 
 - _int_ are integers, such as 10, -6 and 0.
@@ -13,7 +13,7 @@ LIGO offers three built-in numerical types:
 ⚠️ Notice there are no floating point types in LIGO as they are not determinist in hardware modules.
 
 <!-- prettier-ignore -->
-ℹ️Large integral values can be expressed using underscores to separate groups of digits, like 1\_000mutez or 0.000\_004tez. Notice 1tez = 1\_000\_000mutez.
+ℹ️ Large integral values can be expressed using underscores to separate groups of digits, like 1\_000mutez or 0.000\_004tez. Notice 1tez = 1\_000\_000mutez.
 
 ## Addition
 
@@ -48,7 +48,6 @@ Multiplications follow the same principles.
 let a : int = 5 * 5
 let b : nat = 5n * 5n
 let c : tez = 5n * 5mutez
-
 ```
 
 ## Division
@@ -89,7 +88,7 @@ let b : nat = abs (1)
 *is\_nat* returns a _nat_ or _None_
 
 ```
-let is_a_nat : nat option = Michelson.is_nat (1)
+let is_a_nat : nat option = is_nat (1)
 ```
 
 ## Your mission
