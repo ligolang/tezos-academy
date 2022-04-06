@@ -6,11 +6,11 @@ LIGO is a strongly and statically typed language. This means that the compiler c
 
 ## Built-in types
 
-LIGO comes with all basic types built-in like _string_, _int_ or _tez_ for account balance or monetary transactions. You can find all built-in types on <a href="https://gitlab.com/ligolang/ligo/blob/dev/src/passes/operators/operators.ml#L35" target="_blank">the LIGO gitlab</a>.
+LIGO comes with all basic types built-in like _string_, _int_ or _tez_ for account balance or monetary transactions. You can find all built-in types on <a href="https://gitlab.com/ligolang/ligo/-/blob/dev/src/environment/environment.ml" target="_blank">the LIGO gitlab</a>.
 
 ## Type aliases
 
-Type aliasing consists in renaming a given type, when the context calls for a more precise name. This increases readability and maintainability of your smart contracts. For example we can choose to alias a string type as an animal breed - this will allow us to comunicate our intent with added clarity.
+Type aliasing consists in renaming a given type, when the context calls for a more precise name. This increases readability and maintainability of your smart contracts. For example we can choose to alias a string type as an animal breed - this will allow us to communicate our intent with added clarity.
 
 ```
 type breed = string;
@@ -29,12 +29,12 @@ let ledger: account_balances = Map.literal( list([
 ]));
 ```
 
-ℹ️We will look more deeply into the _map_ construct in the following chapters.
+ℹ️  We will look more deeply into the _map_ construct in the following chapters.
 
 ## Structured types
 
 Often contracts require complex data structures, which in turn require well-typed storage or functions to work with. LIGO offers a simple way to compose simple types into structured types.
-The first of those structured types is the record, which aggregates types as fields and index them with a field name. In the example below we define an account type whick keeps the balance and number of previous transactions for a given account.
+The first of those structured types is the record, which aggregates types as fields and index them with a field name. In the example below we define an account type which keeps the balance and number of previous transactions for a given account.
 
 ```
 type account = address;
@@ -51,7 +51,7 @@ let my_account : account = {
 };
 ```
 
-ℹ️We will look more deeply into the _record_ construct in the following chapters.
+ℹ️  We will look more deeply into the _record_ construct in the following chapters.
 
 ## Your mission
 
