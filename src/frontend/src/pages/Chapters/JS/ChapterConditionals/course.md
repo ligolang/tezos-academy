@@ -50,11 +50,9 @@ let isSmall = (n : nat) : bool => {
 
 We want to conditionally change the engine attribute (third number) to 1 only if it is equal to 0.
 
-<!-- prettier-ignore -->1- Refactor *modified\_ship* as a variable equal to *my\_ship*
+<!-- prettier-ignore -->1- Define a condition _if_ the engine attribute equal 0. Don't forget the attributes are defined as strings.
 
-<!-- prettier-ignore -->2- Then define a condition _if_ the engine attribute equal 0. Don't forget the attributes are defined as strings.
-
-<!-- prettier-ignore -->3- If the condition is met, change *modified\_ship* to its new value. Otherwise, _skip_ the instructions.
+<!-- prettier-ignore -->2- If the condition is met, apply changes and return resulting new ship code. Otherwise, return the given ship code (parameter *my\_ship*).
 
 <!-- prettier-ignore -->⚠️ If you have installed LIGO then you can test the execution of the *modify\_ship* function by running the following command:
 

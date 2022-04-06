@@ -43,7 +43,7 @@ Conditional logic enables forking the control flow depending on the state.
 
 ```
 let isSmall (n : nat) : bool =
-if n < 10n then true else false
+  if n < 10n then true else false
 ```
 
 ⚠️ Notice that, as in OCaml, in CameLIGO, if a conditional has a branch else (), that branch can be omitted.
