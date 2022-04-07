@@ -24,7 +24,7 @@
     "import-shared": "rm -Rf src/shared && cp -R ../api/src/shared src/shared"
   },
   "dependencies": {
-    "@monaco-editor/react": "3.2.1",
+    "@monaco-editor/react": "^4.4.1",
     "@redux-offline/redux-offline": "^2.6.0",
     "axios": "^0.19.2",
     "class-transformer": "^0.2.3",
@@ -35,6 +35,7 @@
     "history": "^4.10.1",
     "jwt-decode": "^2.2.0",
     "markdown-to-jsx": "^6.11.4",
+    "monaco-themes": "^0.4.1",
     "rc-slider": "9.2.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

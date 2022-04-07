@@ -1,4 +1,4 @@
-import Editor, { ControlledEditor, DiffEditor } from '@monaco-editor/react'
+import Editor, { DiffEditor } from '@monaco-editor/react'
 import Markdown from 'markdown-to-jsx'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
@@ -11,6 +11,18 @@ import { Button, ButtonBorder, ButtonText, ChapterCourse, ChapterGrid, ChapterH1
 import { Dialog } from './Chapter.components/Dialog/Dialog.controller'
 import { Light } from './Chapter.components/Light/Light.view'
 
+const monacoTheme = 'vs-dark'
+const monacoFontOpt = {
+  lineNumbers: true,
+  scrollBeyondLastLine: true,
+  minimap: { enabled: false },
+  scrollbar: { vertical: 'hidden', verticalScrollbarSize: 0 },
+  folding: true,
+  readOnly: true,
+  fontSize: 12,
+  fontFamily: 'go_monoregular',
+}
+
 const MonacoReadOnly = ({ children }: any) => {
   const height = children.split('\n').length * 22
   return (
@@ -19,16 +31,14 @@ const MonacoReadOnly = ({ children }: any) => {
         height={height}
         value={children}
         language="pascaligo"
-        theme="myCustomTheme"
+        theme={monacoTheme}
         options={{
+          ...monacoFontOpt,
           lineNumbers: false,
           scrollBeyondLastLine: false,
-          minimap: { enabled: false },
           scrollbar: { vertical: 'hidden', verticalScrollbarSize: 0, alwaysConsumeMouseWheel: false },
           folding: false,
           readOnly: true,
-          fontSize: 14,
-          fontFamily: 'Proxima Nova',
         }}
       />
     </div>
@@ -38,22 +48,7 @@ const MonacoReadOnly = ({ children }: any) => {
 const MonacoEditorSupport = ({ support }: any) => {
   return (
     <div>
-      <Editor
-        height="500px"
-        value={support}
-        language="pascaligo"
-        theme="myCustomTheme"
-        options={{
-          lineNumbers: true,
-          scrollBeyondLastLine: true,
-          minimap: { enabled: false },
-          scrollbar: { vertical: 'hidden', verticalScrollbarSize: 0 },
-          folding: true,
-          readOnly: true,
-          fontSize: 14,
-          fontFamily: 'Proxima Nova',
-        }}
-      />
+      <Editor height="500px" value={support} language="pascaligo" theme="myCustomTheme" options={monacoFontOpt} />
     </div>
   )
 }
@@ -61,22 +56,13 @@ const MonacoEditorSupport = ({ support }: any) => {
 const MonacoEditor = ({ proposedSolution, proposedSolutionCallback }: any) => {
   return (
     <div>
-      <ControlledEditor
+      <Editor
         height="500px"
         value={proposedSolution}
         language="pascaligo"
-        theme="myCustomTheme"
-        onChange={(_, val) => proposedSolutionCallback(val)}
-        options={{
-          lineNumbers: true,
-          scrollBeyondLastLine: true,
-          minimap: { enabled: false },
-          scrollbar: { vertical: 'hidden', verticalScrollbarSize: 0 },
-          folding: true,
-          readOnly: false,
-          fontSize: 14,
-          fontFamily: 'Proxima Nova',
-        }}
+        theme={monacoTheme}
+        onChange={(val, _) => proposedSolutionCallback(val)}
+        options={{ ...monacoFontOpt, readOnly: false }}
       />
     </div>
   )
@@ -91,18 +77,8 @@ const MonacoDiff = ({ solution, proposedSolution }: any) => {
         modified={solution}
         language="pascaligo"
         // @ts-ignore
-        theme="myCustomTheme"
-        options={{
-          lineNumbers: true,
-          scrollBeyondLastLine: true,
-          minimap: { enabled: false },
-          scrollbar: { vertical: 'hidden', verticalScrollbarSize: 0 },
-          folding: true,
-          readOnly: false,
-          fontSize: 14,
-          fontFamily: 'Proxima Nova',
-          renderSideBySide: false,
-        }}
+        theme={monacoTheme}
+        options={{ ...monacoFontOpt, readOnly: false }}
       />
     </div>
   )
@@ -247,7 +223,7 @@ ChapterView.propTypes = {
   showDiff: PropTypes.bool.isRequired,
   proposedSolutionCallback: PropTypes.func.isRequired,
   course: PropTypes.string,
-  supports: PropTypes.array.isRequired,
+  supports: PropTypes.object.isRequired,
 }
 
 ChapterView.defaultProps = {
