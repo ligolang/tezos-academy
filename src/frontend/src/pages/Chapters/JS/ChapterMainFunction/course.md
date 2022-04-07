@@ -63,7 +63,7 @@ let main = ([action, store]: [parameter, storage]): return_ =>
   });
 ```
 
-ℹ️ Now that you created a main function, you can now transpile your code into Michaelson and deploy it on Tezos. Try it out on the <a href="https://ide.ligolang.org/" target="_blank">LIGOlang IDE</a>
+ℹ️ Now that you created a main function, you can now transpile your code into Michelson and deploy it on Tezos. Try it out on the <a href="https://ide.ligolang.org/" target="_blank">LIGOlang IDE</a>
 
 ## Your mission
 
