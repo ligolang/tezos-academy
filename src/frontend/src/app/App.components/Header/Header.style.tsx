@@ -6,6 +6,7 @@ export const HeaderStyled = styled.div`
   position: relative;
   text-align: center;
   z-index: 1;
+  overflow: hidden;
 
   .user {
     position: absolute;
