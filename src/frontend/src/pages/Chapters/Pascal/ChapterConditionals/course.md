@@ -43,18 +43,28 @@ Conditional logic enables forking the control flow depending on the state.
 
 ```
 function isSmall (const n : nat) : bool is
-if n < 10n then true else false
+  if n < 10n then true else false
 ```
 
 ⚠️ When the branches of the conditional are not a single expression, as above, we need a block:
 
 ```
-if x < y then
-block {
-x := x + 1;
-y := y - 1
+if x < y then {
+  const z : nat = x;
+  x := y; y := z
 }
-else skip;
+else skip
+```
+
+ℹ️ Notice that if a conditional has a branch else skip, that branch can be omitted. The resulting so-called dangling else problem is parsed by associating any else to the closest preceding then.
+
+The conditional above is better written as follows:
+
+```
+if x < y then {
+  const z : nat = x;
+  x := y; y := z
+}
 ```
 
 ## Your mission
@@ -65,7 +75,7 @@ We want to conditionally change the engine attribute (third number) to 1 only if
 
 <!-- prettier-ignore -->2- Then define a condition _if_ the engine attribute equal 0. Don't forget the attributes are defined as strings.
 
-<!-- prettier-ignore -->3- If the condition is met, change *modified\_ship* to it new value. Otherwise, _skip_ the instructions.
+<!-- prettier-ignore -->3- If the condition is met, change *modified\_ship* to it new value.
 
 <!-- prettier-ignore -->⚠️ If you have installed LIGO then you can test the execution of the *modify\_ship* function by running the following command:
 

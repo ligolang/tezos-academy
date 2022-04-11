@@ -7,7 +7,7 @@
 Constants are immutable by design, which means their values cannot be reassigned. Put in another way, they can be assigned once, at their declaration. When defining a constant you need to provide a name, type and a value:
 
 ```
-let age: int = 25;
+let age: int = 25
 ```
 
 ## Variables
@@ -16,7 +16,7 @@ let age: int = 25;
 As expected in the pure subset of a functional language, CameLIGO only features constant values: once they are declared, the value cannot be changed (or "mutated").
 
 ```
-let c: int = 2 + 3
+let c : int = 2 + 3
 let c : int = c - 3
 ```
 
