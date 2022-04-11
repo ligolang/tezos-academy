@@ -236,22 +236,32 @@ export const HomeAlertText = styled.div`
 export const HomeFooter = styled.div`
   background: #000;
   width: 100%;
+  padding: 3ex 3ch;
 `
 
 export const HomeFooterGrid = styled.div`
   width: 100%;
   max-width: 1280px;
   margin: auto;
-  padding: 50px 0;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr 2fr;
   grid-gap: 30px;
   font-family: 'Proxima Nova';
 
+  p { font-size: 1.1em; }
+
   a {
     text-decoration: underline !important;
     display: block;
     line-height: 20px;
+  }
+
+  img.centered {
+    vertical-align: unset;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 
   @media (max-width: 900px) {

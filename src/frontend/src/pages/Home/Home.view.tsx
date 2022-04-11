@@ -93,6 +93,56 @@ export const HomeView = () => {
         <p>Type your solution to each exercise online and compare with the solution</p>
         <img alt="editor" src="/images/editor.png" />
       </HomeEditor>
+
+      <HomeFooter>
+        <HomeFooterGrid>
+          <div>
+            <img alt="logo" src="/images/logo.svg" />
+            <a href="https://github.com/AymericBethencourt/tezos-academy" target="_blank">
+              Github
+            </a>
+          </div>
+          <div>
+            <p>About LIGO</p>
+            <a href="https://ligolang.org/docs/intro/introduction" target="_blank">
+              Documentation
+            </a>
+            <a href="https://ide.ligolang.org/" target="_blank">
+              Online IDE
+            </a>
+          </div>
+          <div>
+            <p>About Tezos</p>
+            <a href="mailto:aymeric.bethencourt@smart-chain.fr" target="_blank">
+              Support
+            </a>
+            <a href="https://www.reddit.com/r/tezos/" target="_blank">
+              Reddit
+            </a>
+          </div>
+          <div>
+            <p>About SmartChain</p>
+            <a href="https://smart-chain.fr/" target="_blank">
+              Homepage
+            </a>
+            <a href="https://twitter.com/smartchain_" target="_blank">
+              Twitter
+            </a>
+          </div>
+          <div>
+            <p>About the devs</p>
+            <a href="https://www.linkedin.com/in/aymeric-bethencourt-96665046/" target="_blank">
+              Aymeric Bethencourt
+            </a>
+            <a href="https://www.linkedin.com/in/frank-hillard-300b6b106/" target="_blank">
+              Frank Hillard
+            </a>
+          </div>
+          <div>
+            <img className="centered" alt="SmartChain logo" src="/images/Smart-Chain-Logo.png" height="30" />
+          </div>
+        </HomeFooterGrid>
+      </HomeFooter>
     </HomeStyled>
   )
 }
