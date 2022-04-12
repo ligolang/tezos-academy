@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro'
 
 export const ChapterAboutStyled = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
   height: calc(100vh - 130px);
   margin: 74px 20px 0;
 `
@@ -23,7 +25,6 @@ export const ChapterGrid = styled.div<{ hasTabs?: boolean }>`
   display: grid;
   grid-template-rows: ${(props) => (props.hasTabs ? '30px 500px auto' : '500px auto')};
   grid-gap: 0;
-  overflow-y: scroll;
 
   @media (max-width: 900px) {
     overflow-y: initial;

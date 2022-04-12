@@ -14,12 +14,6 @@ export const FooterStyled = styled.div`
     bottom: 0;
     right: 0;
   }
-
-  @media (max-width: 900px) {
-    > a:nth-child(1) {
-      display: none;
-    }
-  }
 `
 
 export const FooterCredits = styled.div`
