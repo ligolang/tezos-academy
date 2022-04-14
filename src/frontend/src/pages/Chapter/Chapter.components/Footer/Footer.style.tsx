@@ -23,14 +23,14 @@ export const FooterStyled = styled.div`
 `
 
 export const FooterCredits = styled.div`
-  text-align: center;
-  position: absolute;
-  width: 100vw;
-  bottom: 10px;
-  left: 0;
-  font-size: 12px;
-  line-height: 14px;
-  color: #08658b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  p {
+    margin-top: 3ex;
+  }
 
   a,
   a:visited {
