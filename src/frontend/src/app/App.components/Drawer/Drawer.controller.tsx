@@ -35,7 +35,6 @@ export const Drawer = () => {
   function removeAuthUserCallback() { }
 
   function changeLanguageCallback(e: string) {
-    console.log(e)
     if (e === 'PascaLIGO') {
       history.push(pathname.replace(new RegExp('camel|reason|js', 'i'), 'pascal'))
       setActiveLanguage('PascaLIGO')
