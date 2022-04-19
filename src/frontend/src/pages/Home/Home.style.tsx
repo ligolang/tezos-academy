@@ -4,7 +4,6 @@ export const HomeStyled = styled.div``
 
 export const HomeHeader = styled.div`
   height: calc(100vh - 80px);
-  width: 100%;
   max-width: 1280px;
   margin: auto;
 
@@ -248,20 +247,24 @@ export const HomeFooterGrid = styled.div`
   grid-gap: 30px;
   font-family: 'Proxima Nova';
 
-  p { font-size: 1.1em; }
+  p { font-size: 1em; }
 
   a {
     text-decoration: underline !important;
     display: block;
     line-height: 20px;
+    font-size: .85em;
   }
 
-  img.centered {
-    vertical-align: unset;
-    position: relative;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+
+  @media (min-width: 900px) {
+    img.centered {
+      vertical-align: unset;
+      position: relative;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 
   @media (max-width: 900px) {

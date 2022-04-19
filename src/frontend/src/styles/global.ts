@@ -2,8 +2,11 @@ import { createGlobalStyle } from 'styled-components/macro'
 
 import { fadeInFromLeft, slideLeftEnter, slideLeftExit, slideRightEnter, slideRightExit } from './animations'
 import { backgroundColor, placeholderColor, textColor } from './colors'
+import { normalize } from 'styled-normalize'
 
 export const GlobalStyle = createGlobalStyle`
+${normalize}
+
 * {
   box-sizing: border-box;
 }
@@ -33,34 +36,14 @@ export const GlobalStyle = createGlobalStyle`
 body {
   font-family: 'Electrolize', Helvetica, Arial, sans-serif;
   font-display: optional;
-  margin: 0;
-  padding: 0;
   background-color: ${backgroundColor};
   color: ${textColor};
-  font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {
-  font-size: 40px;
-  font-weight: 700;
-  display: inline-block;
-  margin: 20px 0px;
-}
-
-h2 {
-  font-size: 20px;
-  font-weight: normal;
-  display: block;
-  margin: 0;
-}
-
-h3 {
-  font-size: 30px;
-  font-weight: normal;
-  display: block;
-  margin: 0;
+  font-size: 2.5em;
 }
 
 input {
@@ -71,10 +54,6 @@ input {
 ::placeholder {
   color: ${placeholderColor};
   font-size: 14px;
-}
-
-*:focus {
-  outline: none;
 }
 
 a {

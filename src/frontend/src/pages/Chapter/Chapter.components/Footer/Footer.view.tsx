@@ -27,16 +27,7 @@ export const FooterView = () => {
       </Link>
       <FooterCredits>
         <p>
-          MADE WITH 💚 BY{' '}
-          <a href="https://www.linkedin.com/in/aymeric-bethencourt-96665046/" target="_blank" rel="noopener noreferrer">
-            AYMERIC BETHENCOURT
-          </a>
-          {', '}
-          <a href="https://www.linkedin.com/in/frank-hillard-300b6b106" target="_blank" rel="noopener noreferrer">
-            FRANK HILLARD
-          </a>
-          {' AND '}
-          <a href="https://smart-chain.fr" target="_blank" rel="noopener noreferrer">
+          MADE WITH 💚 BY <a href="https://smart-chain.fr" target="_blank" rel="noopener noreferrer">
             SMART CHAIN
           </a>
         </p>
