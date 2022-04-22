@@ -14,7 +14,7 @@ export const AppBg = styled.div`
 
 export const AppWrapper = styled.div`
   position: absolute;
-  width: 100vw;
+  width: 100%;
   top: 0;
   background: url('/images/grid.svg') repeat center top;
   will-change: transform, opacity;

@@ -25,12 +25,23 @@ export const ChapterGrid = styled.div<{ hasTabs?: boolean }>`
   display: grid;
   grid-template-rows: ${(props) => (props.hasTabs ? '30px 500px auto' : '500px auto')};
   grid-gap: 0;
+  overflow-y: scroll;
 
   @media (max-width: 900px) {
     overflow-y: initial;
     grid-template-rows: ${(props) => (props.hasTabs ? 'auto auto auto' : 'auto auto')};
     margin-bottom: 20px;
   }
+`
+
+export const ChapterGridTabNav = styled.div`
+  white-space: nowrap;
+  display: block !important;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: none;
 `
 
 export const ChapterCourse = styled.div`

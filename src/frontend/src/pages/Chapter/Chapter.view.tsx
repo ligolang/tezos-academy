@@ -6,8 +6,26 @@ import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { PENDING, RIGHT, WRONG } from '../ChapterAbout/ChapterAbout.constants'
-//prettier-ignore
-import { Button, ButtonBorder, ButtonText, ChapterCourse, ChapterGrid, ChapterH1, ChapterH2, ChapterH3, ChapterItalic, ChapterMonaco, ChapterStyled, ChapterTab, ChapterValidator, ChapterValidatorContent, ChapterValidatorContentWrapper, ChapterValidatorInside, ChapterValidatorTitle } from "../ChapterAbout/ChapterAbout.style";
+import {
+  Button,
+  ButtonBorder,
+  ButtonText,
+  ChapterCourse,
+  ChapterGrid,
+  ChapterGridTabNav,
+  ChapterH1,
+  ChapterH2,
+  ChapterH3,
+  ChapterItalic,
+  ChapterMonaco,
+  ChapterStyled,
+  ChapterTab,
+  ChapterValidator,
+  ChapterValidatorContent,
+  ChapterValidatorContentWrapper,
+  ChapterValidatorInside,
+  ChapterValidatorTitle,
+} from '../ChapterAbout/ChapterAbout.style'
 import { Dialog } from './Chapter.components/Dialog/Dialog.controller'
 import { Light } from './Chapter.components/Light/Light.view'
 
@@ -48,7 +66,7 @@ const MonacoReadOnly = ({ children }: any) => {
 const MonacoEditorSupport = ({ support }: any) => {
   return (
     <div>
-      <Editor height="500px" value={support} language="pascaligo" theme="myCustomTheme" options={monacoFontOpt} />
+      <Editor height="500px" value={support} language="pascaligo" theme={monacoTheme} options={monacoFontOpt} />
     </div>
   )
 }
@@ -185,23 +203,23 @@ export const ChapterView = ({
       </ChapterCourse>
       <ChapterGrid hasTabs={Object.keys(supports).length > 0}>
         {Object.keys(supports).length > 0 && (
-          <div style={{ overflow: 'scroll' }}>
+          <ChapterGridTabNav>
             <ChapterTab isSelected={display === 'solution'} onClick={() => setDisplay('solution')}>
               Exercise
             </ChapterTab>
             {Object.keys(supports).map((key, index) => (
-              <ChapterTab isSelected={display === key} onClick={() => setDisplay(key)}>
+              <ChapterTab key={key} isSelected={display === key} onClick={() => setDisplay(key)}>
                 {`${key}.${extension}`}
               </ChapterTab>
             ))}
-          </div>
+          </ChapterGridTabNav>
         )}
         {display === 'solution' ? (
           <ChapterMonaco>
             {showDiff ? (
-              <MonacoDiff solution={solution} proposedSolution={proposedSolution} />
+              <MonacoDiff {...{ solution, proposedSolution }} />
             ) : (
-              <MonacoEditor proposedSolution={proposedSolution} proposedSolutionCallback={proposedSolutionCallback} />
+              <MonacoEditor {...{ proposedSolution, proposedSolutionCallback }} />
             )}
           </ChapterMonaco>
         ) : (
@@ -209,7 +227,7 @@ export const ChapterView = ({
             <MonacoEditorSupport support={supports[display]} />
           </ChapterMonaco>
         )}
-        <Validator validatorState={validatorState} validateCallback={validateCallback} />
+        <Validator {...{ validatorState, validateCallback }} />
       </ChapterGrid>
     </ChapterStyled>
   )
