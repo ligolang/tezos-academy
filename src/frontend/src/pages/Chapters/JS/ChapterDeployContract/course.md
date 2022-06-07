@@ -37,14 +37,14 @@ Deployment of a smart contract in Tezos is called "origination".
 Here is the syntax of the tezos command line to deploy a smart contract :
 
 ```
-tezos-client originate contract <contract_name> for <user> transferring <amount_tez> from <from_user> \
-             running <tz_file> \
-             --init '<initial_storage>' --burn-cap <gaz_fee>
+tezos-client originate contract <contract_name> transferring <amount_tez> from <from_user> \
+  running <tz_file> \
+  --init '<initial_storage>' --burn-cap <gaz_fee>
 ```
 
 <contract_name> name given to the contract
 <tz_file> path of the Michelson smart contract code (TZ file).
-<amount_tez> is the quantity of tez being transferred to the newly deployed contract. If a contract balance reaches 0 then it is deactivated.
+<amount_tez> is the quantity of tez being transferred to the newly deployed contract.
 <from_user> account from which the tez are taken from (and transferred to the new contract).
 <initial_storage> is a Michelson expression. The --init parameter is used to specify initial state of the storage.
 <gaz_fee> it specifies the the maximal fee the user is willing to pay for this operation (using the --burn-cap parameter).
@@ -79,10 +79,8 @@ This LIGO compiler is also used to transform "LIGO expression" into "Michelson e
 Here is how to transform LIGO code into Michelson code using the LIGO compiler in command line.
 
 ```
-ligo compile contract code.ligo -e mainFunc > code.tz
+ligo compile contract code.ligo > code.tz
 ```
-
-⚠️ The <mainFunc> argument is the name of the "main function" in the .jsligo file and is introduced with the *-e* option. (see Chapter "Main Function").
 
 ⚠️ Notice that the output of the command is the Michelson code. We just redirect the command output into a .tz file.
 
@@ -91,28 +89,27 @@ ligo compile contract code.ligo -e mainFunc > code.tz
 Here is how to transform LIGO expression into Michelson expression using the LIGO compiler in command line.
 
 ```
-ligo compile storage code.ligo '<ligo_expression>' [options]
+ligo compile storage code.ligo '<storage_expression>' [options]
 ```
 
-<ligo_expression> is a LIGO expression representing the storage of the smart contract
+<storage_expression> is a LIGO expression representing the storage of the smart contract
 
 ### Invocation parameter
 
 Here is how to transform LIGO expression into Michelson expression using the LIGO compiler in command line.
 
 ```
-ligo compile parameter code.ligo mainFunc '<ligo_expression>' [options]
+ligo compile parameter code.ligo mainFunc '<parameter_expression>' [options]
 ```
 
-<ligo_expression> is a LIGO expression representing the called entrypoint of the smart contract. If the smart contrat has only the default entrypoint the value is *unit*, otherwise it expects the name of the entrypoint and its arguments.
+<parameter_expression> is a LIGO expression representing the called entrypoint of the smart contract. If the smart contrat has only the default entrypoint the value is *unit*, otherwise it expects the name of the entrypoint and its arguments.
 
 ### Simulating
 
 Here is how to simulate the execution of an entry point using the LIGO compiler in command line.
 
 ```
-ligo run dry-run code.ligo mainFunc '<entrypoint(p)>' '<storage_state>' [options]
-ligo run dry-run starmap.jsligo 'AddPlanet(["earth", [1,2,3]])' 'Map.empty as map<string, coordinates>' [options]
+ligo run dry-run code.ligo '<entrypoint(p)>' '<storage_state>' [options]
 ```
 
 <storage\_state> state of the storage when simulating the execution of the entry point

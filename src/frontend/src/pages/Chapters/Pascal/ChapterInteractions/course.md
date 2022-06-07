@@ -45,13 +45,13 @@ type parameter is
 
 type return is list (operation) * storage
 
-function main (const action : parameter; const store : storage) : return is
- ((nil : list (operation)),
-  case action of
-    Increment (n) -> store + n
-  | Decrement (n) -> store - n
-  | Reset         -> 0
- end)
+function main (const action : parameter; const store : storage) : return is 
+  ((nil : list (operation)),
+    case action of [
+      Increment (n) -> store + n
+    | Decrement (n) -> store - n
+    | Reset         -> 0
+  ])
 ```
 
 ```
@@ -68,16 +68,15 @@ type return is list (operation) * storage
 
 const dest : address = ("KT19wgxcuXG9VH4Af5Tpm1vqEKdaMFpznXT3" : address) // Deployment address of counter.ligo
 
-function proxy (const action : parameter; const store : storage): return is
-  block {
-    const counter : contract (parameter) =
-      case (Tezos.get_contract_opt(dest) : option (contract (parameter))) of
+function proxy (const action : parameter; const store : storage): return is {
+  const counter : contract (parameter) =
+    case (Tezos.get_contract_opt(dest) : option (contract (parameter))) of [
         Some (contract) -> contract
       | None -> (failwith ("Contract not found.") : contract (parameter))
-      end;
-    const op : operation = Tezos.transaction (action, 0tez, counter); // E.g. with action = Increment (5n)
-    const operations : list (operation) = list [op]
-  } with (operations, store)
+    ];
+  const op : operation = Tezos.transaction (action, 0tez, counter); // E.g. with action = Increment (5n)
+  const operations : list (operation) = list [op]
+} with (operations, store)
 ```
 
 Notice that :
@@ -102,10 +101,10 @@ type return is list (operation) * storage
 
 function main (const action : parameter; const store : storage) : return is
  ((nil : list (operation)),
-  case action of
+  case action of [
     Fire (n) -> n
   | Stop -> 0
- end)
+ ])
 ```
 
 <!-- prettier-ignore -->⚠️ Notice that the weapon smart contract provides two entrypoints Fire and Stop.

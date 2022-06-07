@@ -28,9 +28,9 @@ type parameter is
 | Default  of unit
 
 (* Function executed when {threshold} approvals has been reached  *)
-function execute_action(const str : string; const s : storage ) : list(operation) is block {
+function execute_action(const str : string; const s : storage ) : list(operation) is {
   var listop : list(operation) := list [];
-  if (String.sub(1n,1n,str) = "3") then block {
+  if (String.sub(1n,1n,str) = "3") then {
     const ci_opt : option(contract(action)) = Tezos.get_contract_opt(s.target_contract);
     const op : operation = case ci_opt of [
       Some(ci) -> Tezos.transaction(Increment(3), 0tz, ci)
@@ -38,16 +38,14 @@ function execute_action(const str : string; const s : storage ) : list(operation
     ];
     listop := list [op; ];
   }
-  else skip
 } with listop
 
 (* Propagate message p if the number of authorized addresses having voted for the same message p equals the threshold. *)
 function send (const param : message; var s : storage) : return is
-  block {
+  {
     // check sender against the authorized addresses
     if not Set.mem (Tezos.sender, s.authorized_addresses)
-    then failwith("Unauthorized address")
-    else skip;
+    then failwith("Unauthorized address");
 
     // check message size against the stored limit
     var msg : message := param;
@@ -68,7 +66,7 @@ function send (const param : message; var s : storage) : return is
       ret_ops := execute_action(msg, s);
 
       // Modify the code below
-      for addr in set new_store block {
+      for addr in set new_store {
         s.reputation := case Map.find_opt (addr, s.reputation) of [
           Some(count) -> Map.update(addr, Some(count + 1n), s.reputation)
         | None -> Map.add(addr, 1n, s.reputation)
@@ -79,13 +77,12 @@ function send (const param : message; var s : storage) : return is
 
 (* Withdraw vote for message p *)
 function withdraw (const param : message; var s : storage) : return is
-  block {
+  {
     var message : message := param;
     const packed_msg : bytes = Bytes.pack (message);
 
     case s.message_store[packed_msg] of [
-      Some (voters) ->
-        block {
+      Some (voters) -> {
           // The message is stored
           const new_set : addr_set = Set.remove (Tezos.sender, voters);
 

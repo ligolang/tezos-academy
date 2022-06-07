@@ -1,3 +1,3 @@
-ligo compile-storage starmap3.ligo main ''
+ligo compile storage starmap3.ligo ''
 
-ligo dry-run starmap3.ligo main '' ''
+ligo run dry-run starmap3.ligo main '' ''

@@ -25,15 +25,13 @@ function fail_on( const condition : bool; const message : string) : unit is if c
  * FA2-specific entrypoints
  *)
 function transfer( const params : transfer_params; const store  : storage) : entrypoint is 
-  block { 
+  { 
     const sender_addr : address = Tezos.sender;
 
-    function make_transfer( const acc : entrypoint; const parameter : transfer_param) : entrypoint is 
-      block { 
+    function make_transfer( const acc : entrypoint; const parameter : transfer_param) : entrypoint is { 
         validate_operators (parameter, acc.1.operators);
 
-        function transfer_tokens( const accumulator : storage; const destination : transfer_destination) : storage is 
-          block { 
+        function transfer_tokens( const accumulator : storage; const destination : transfer_destination) : storage is { 
             validate_token_type (destination.1.0);
             const tok_id : nat = destination.1.1;
             const updated_ledger : ledger = Big_map.update(tok_id, Some (destination.0), store.ledger);
@@ -49,10 +47,8 @@ function transfer( const params : transfer_params; const store  : storage) : ent
 } with List.fold (make_transfer, params, ((nil : list (operation)), store))
 
 
-function balance_of ( const parameter : balance_of_params; const store : storage) : entrypoint is 
-block { 
-  function retreive_balance( const request : balance_of_request) : balance_of_response is 
-  block { 
+function balance_of ( const parameter : balance_of_params; const store : storage) : entrypoint is { 
+  function retreive_balance( const request : balance_of_request) : balance_of_response is { 
     validate_token_type (request.token_id);
     var retreived_balance : nat := case Big_map.find_opt (request.token_id, store.ledger) of
       Some (current_owner) -> if (request.owner =/= current_owner) then 0n else 1n
@@ -67,20 +63,17 @@ block {
 function token_metadata_registry( const parameter : token_metadata_registry_params; const store : storage) : entrypoint is
   ( list [Tezos.transaction( Tezos.self_address, 0mutez, parameter)], store )
 
-function permission_descriptor( const parameter : permissions_descriptor_params; const store : storage) : entrypoint is 
-  block  { 
+function permission_descriptor( const parameter : permissions_descriptor_params; const store : storage) : entrypoint is { 
     const operator_permissions : operator_transfer_policy = Layout.convert_to_right_comb((Owner_or_operator_transfer : operator_transfer_policy_));
     const owner_hook_policy : owner_hook_policy = Layout.convert_to_right_comb((Optional_owner_hook : owner_hook_policy_));
     const permissions : permissions_descriptor = (operator_permissions, (owner_hook_policy, (owner_hook_policy, (None : option (custom_permission_policy)))));
   } with ( list [Tezos.transaction( permissions, 0mutez, parameter)], store )
 
-function update_operators_action( const parameter : update_operator_params; const store : storage) : entrypoint is 
-  block { 
+function update_operators_action( const parameter : update_operator_params; const store : storage) : entrypoint is { 
     const updated_operators : operators = update_operators (parameter, store.operators)
   } with ( (nil : list (operation)), store with record [ operators = updated_operators ] )
 
-function is_operator( const param  : is_operator_params; const operators : operators) : operation is 
-block { 
+function is_operator( const param  : is_operator_params; const operators : operators) : operation is { 
   const operator_param : operator_param_ = Layout.convert_from_right_comb ((param.0 : operator_param));
   const operator_key : (owner * operator) = (operator_param.owner, operator_param.operator);
   const is_present : bool = Big_map.mem (operator_key, operators);
@@ -119,7 +112,7 @@ function fa2_main( const action : fa2_entry_points; const store  : storage) : en
     end
 
 function main( const action : closed_parameter; const store  : storage) : entrypoint is 
-block { fail_on (Tezos.amount =/= 0tz, "XTZ_RECEIVED") // Validate whether the contract receives non-zero amount of tokens
+{ fail_on (Tezos.amount =/= 0tz, "XTZ_RECEIVED") // Validate whether the contract receives non-zero amount of tokens
 } with case action of
     Fa2                   (params) -> fa2_main              (params, store)
   | Asset                 (params) -> custom_main           (params, store)

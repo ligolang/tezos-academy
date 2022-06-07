@@ -1,4 +1,4 @@
 // Type your solution below
-var itinary : list (string) := list ["earth"]
-itinary := "sun" # itinary
-itinary := "alpha-centauri" # itinary
+var itinerary : list (string) := list ["earth"]
+itinerary := "sun" # itinerary
+itinerary := "alpha-centauri" # itinerary

@@ -101,7 +101,7 @@ Map.add (input.0, store.func(input.1), store.systemplanets)
 The implementation of the lambda can be changed with the _changeFunc_ function which assigns some new code to _func_. Here is an example of execution of the _ChangeFunc_ entry point with the simulation ligo command line :
 
 ```
-ligo dry-run lambda.ligo main 'ChangeFunc(function (const c : coordinates) : coordinates is record[x=c.x*100;y=c.y;z=c.z])' 'record[name="Sol";func=(function (const c : coordinates) : coordinates is record[x=c.x*10;y=c.y;z=c.z]);systemplanets=map "earth" -> record [x=2;y=7;z=1] end]'
+ligo run dry-run starmap.ligo 'ChangeFunc(function (const c : coordinates) : coordinates is record[x=c.x*100;y=c.y;z=c.z])' 'record[name="Sol";func=(function (const c : coordinates) : coordinates is record[x=c.x*10;y=c.y;z=c.z]);systemplanets=map ["earth" -> record [x=2;y=7;z=1]]]'
 ```
 
 ⚠️ Notice that the new implementation of _func_ multiplies the 'x' coordinate by 100 (defined as parameter of _ChangeFunc_ entry point)

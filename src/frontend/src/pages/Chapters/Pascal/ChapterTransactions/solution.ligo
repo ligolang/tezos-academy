@@ -10,7 +10,7 @@ type storage is unit
 type return is list(operation) * storage
 
 function purchase (const _item : nat; const purchase_price : tez; const s : storage) : return is
-block {
+{
     const ship_address : address = ("tz1TGu6TN5GSez2ndXXeDX6LgUDvLzPLqgYV" : address);
     const vendor_address : address = ("tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" : address);
 

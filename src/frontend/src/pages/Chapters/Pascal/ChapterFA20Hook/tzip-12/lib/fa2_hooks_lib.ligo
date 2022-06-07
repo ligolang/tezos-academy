@@ -14,10 +14,10 @@ type get_owners is transfer_descriptor -> list(option(address))
 type to_hook is address -> option (contract (transfer_descriptor_param))
 
 
-function get_owners_from_batch (const batch : list(transfer_descriptor); const get_owners : get_owners) : set(address) is block {
-  function apply_get_owners(const acc : set(address); const tx : transfer_descriptor) : set(address) is block {
+function get_owners_from_batch (const batch : list(transfer_descriptor); const get_owners : get_owners) : set(address) is {
+  function apply_get_owners(const acc : set(address); const tx : transfer_descriptor) : set(address) is {
     const owners : list(option(address)) = get_owners (tx);
-  } with List.fold( 
+  } with List.fold(
       (function (const acc : set(address); const o: option(address)) : set(address) is case o of
         | None -> acc
         | Some (a) -> Set.add (a, acc)
@@ -35,7 +35,7 @@ function convert_to_transfer_descriptor
   ( const self_addr      : address
   ; const param_sender_addr : address
   ; const transfer_destination : transfer_destination
-  ): transfer_descriptor_param is block
+  ): transfer_descriptor_param is
 { const transfer_destination_descriptor_ : transfer_destination_descriptor_ = record
     [ to_      = Some (transfer_destination.0)
     ; token_id = transfer_destination.1.0
@@ -61,8 +61,8 @@ function convert_to_transfer_descriptor
  * to a list of operations provided
  *)
 function validate_owner_hook( const self_addr : address; const param_sender_addr : address; const is_sender : bool; const ops : list (operation); const transfer_destination : transfer_destination
-; const to_hook : to_hook) : list(operation) is block
-{ 
+; const to_hook : to_hook) : list(operation) is
+{
   const hook_addr : address = if is_sender then param_sender_addr else transfer_destination.0;
 } with case to_hook (hook_addr) of
     Some (hook) ->
@@ -85,12 +85,12 @@ function to_sender_hook( const sender_address : address) : option (contract (tra
 (*
  * Make a list of transfer hook calls for each sender or receiver
  *)
-function validate_owner_hooks( const params : transfer_param; const self_addr : address; const is_sender : bool) : list (operation) is 
-  block { 
+function validate_owner_hooks( const params : transfer_param; const self_addr : address; const is_sender : bool) : list (operation) is
+  {
     const to_hook : to_hook = if is_sender then to_sender_hook else to_receiver_hook;
 
-    function validate( const ops : list (operation); const td  : transfer_destination) : list (operation) is 
-    block { 
+    function validate( const ops : list (operation); const td  : transfer_destination) : list (operation) is
+    {
       const owner : address = if is_sender then params.0 else td.0
     } with validate_owner_hook (self_addr, params.0, is_sender, ops, td, to_hook)
 
@@ -112,8 +112,8 @@ function merge_operations
  * Construct a list of transfer hook calls for each sender and
  * receiver if such were specified
  *)
-function generic_transfer_hook( const transfer_param : transfer_param) : list (operation) is 
-block { 
+function generic_transfer_hook( const transfer_param : transfer_param) : list (operation) is
+{
   const self_addr : address = Tezos.self_address;
   const sender_ops : list (operation) = validate_owner_hooks (transfer_param, self_addr, True);
   const receiver_ops : list (operation) = validate_owner_hooks (transfer_param, self_addr, False);

@@ -9,7 +9,7 @@
 function fail_on( const condition : bool; const message : string) : unit is if condition then failwith (message) else unit
 
 function credit_to( const parameter : mint_param_; const store : storage) : storage is 
-block { 
+{ 
   var updated_balance : nat := 0n;
 
   case store.ledger[parameter.to_] of
@@ -26,7 +26,7 @@ type debit_param_ is record
 ; amount : nat
 end
 
-function debit_from( const parameter : debit_param_; const store : storage) : storage is block
+function debit_from( const parameter : debit_param_; const store : storage) : storage is 
 { 
   var updated_ledger : ledger := store.ledger;
   const curr_balance : nat = case store.ledger[parameter.from_] of
@@ -52,7 +52,7 @@ function convert_to_safelist_transfer( const tp : transfer_param) : safelist_tra
   )
 
 function call_assert_transfers( const ops_in : list(operation); const opt_sl_address : option(address); const transfer_params : transfer_params) : list(operation) is 
-block { 
+{ 
   const operations: list(operation) = case opt_sl_address of
     Some (sl_address) -> case (Tezos.get_entrypoint_opt ("%assertTransfers", sl_address) : option(contract(safelist_assert_transfers_param))) of
         Some (sl_caddress) -> Tezos.transaction( List.map(convert_to_safelist_transfer, transfer_params), 0mutez, sl_caddress) # ops_in
@@ -63,7 +63,7 @@ block {
 } with operations
 
 function call_assert_receivers( const opt_sl_address : option(address); const receivers : list(address)) : list(operation) is 
-  block {
+  { 
     const ops_in : list(operation) = nil;
     const operations:list(operation) = case opt_sl_address of
         Some (sl_address) -> case (Tezos.get_entrypoint_opt ("%assertReceivers", sl_address) : option(contract(safelist_assert_receivers_param))) of
@@ -75,7 +75,7 @@ function call_assert_receivers( const opt_sl_address : option(address); const re
   } with operations
 
 function call_assert_receiver( const opt_sl_address : option(address); const receiver : address) : list(operation) is 
-  block { 
+  { 
     const ops_in : list(operation) = nil;
     const operations:list(operation) = case opt_sl_address of
         Some (sl_address) -> case (Tezos.get_entrypoint_opt ("%assertReceiver", sl_address) : option(contract(safelist_assert_receiver_param))) of
@@ -90,21 +90,19 @@ function call_assert_receiver( const opt_sl_address : option(address); const rec
  * FA2-specific entrypoints
  *)
 function transfer( const params : transfer_params; const store  : storage) : entrypoint is 
-  block { 
+  { 
     const sender_addr : address = Tezos.sender;
 
     function make_transfer
       ( const acc       : entrypoint
       ; const parameter : transfer_param
-      ) : entrypoint is block
-    { 
+      ) : entrypoint is { 
       validate_operators (parameter, acc.1.operators);
 
       function transfer_tokens
           ( const accumulator : storage
           ; const destination : transfer_destination
-          ) : storage is block
-        { 
+          ) : storage is { 
           validate_token_type (destination.1.0);
           const debit_param_ : debit_param_ = record [ from_  = parameter.0; amount = destination.1.1 ];
           const credit_param_ : mint_param_ = record[ to_ = destination.0; amount = destination.1.1 ];
@@ -121,10 +119,9 @@ function transfer( const params : transfer_params; const store  : storage) : ent
 
 } with List.fold (make_transfer, params, ((nil : list (operation)), store))
 
-function balance_of ( const parameter : balance_of_params; const store : storage) : entrypoint is 
-block { 
+function balance_of ( const parameter : balance_of_params; const store : storage) : entrypoint is { 
   function retreive_balance( const request : balance_of_request) : balance_of_response is 
-  block { 
+  { 
     validate_token_type (request.token_id);
     // Type your solution below
     var retreived_balance : nat := 0n;
@@ -142,20 +139,17 @@ block {
 function token_metadata_registry( const parameter : token_metadata_registry_params; const store : storage) : entrypoint is
   ( list [Tezos.transaction( Tezos.self_address, 0mutez, parameter)], store )
 
-function permission_descriptor( const parameter : permissions_descriptor_params; const store : storage) : entrypoint is 
-  block  { 
+function permission_descriptor( const parameter : permissions_descriptor_params; const store : storage) : entrypoint is { 
     const operator_permissions : operator_transfer_policy = Layout.convert_to_right_comb((Owner_or_operator_transfer : operator_transfer_policy_));
     const owner_hook_policy : owner_hook_policy = Layout.convert_to_right_comb((Optional_owner_hook : owner_hook_policy_));
     const permissions : permissions_descriptor = (operator_permissions, (owner_hook_policy, (owner_hook_policy, (None : option (custom_permission_policy)))));
   } with ( list [Tezos.transaction( permissions, 0mutez, parameter)], store )
 
-function update_operators_action( const parameter : update_operator_params; const store : storage) : entrypoint is 
-  block { 
+function update_operators_action( const parameter : update_operator_params; const store : storage) : entrypoint is { 
     const updated_operators : operators = update_operators (parameter, store.operators)
   } with ( (nil : list (operation)), store with record [ operators = updated_operators ] )
 
-function is_operator( const param  : is_operator_params; const operators : operators) : operation is 
-block { 
+function is_operator( const param  : is_operator_params; const operators : operators) : operation is { 
   const operator_param : operator_param_ = Layout.convert_from_right_comb ((param.0 : operator_param));
   const operator_key : (owner * operator) = (operator_param.owner, operator_param.operator);
   const is_present : bool = Big_map.mem (operator_key, operators);
@@ -171,9 +165,8 @@ function is_operator_action
   )
 
 function mint( const parameters : mint_params; const store : storage) : entrypoint is 
-block { 
-  function mint_tokens( const accumulator : storage; const mint_param : mint_param) : storage is 
-    block {
+  { 
+  function mint_tokens( const accumulator : storage; const mint_param : mint_param) : storage is { 
       const unwrapped_parameter : mint_param_ = Layout.convert_from_right_comb ((mint_param : mint_param))
     } with credit_to (unwrapped_parameter, accumulator);
 
@@ -187,10 +180,10 @@ block {
 )
 
 function burn( const parameters : burn_params; const store      : storage) : entrypoint is 
-block { 
+  { 
   const sender_address : address = Tezos.sender;
   function burn_tokens( const accumulator : storage; const burn_amount : nat) : storage is 
-    block { 
+    { 
       const debited_storage : storage = debit_from( record[ from_ = sender_address; amount = burn_amount], accumulator);
     } with debited_storage;
 

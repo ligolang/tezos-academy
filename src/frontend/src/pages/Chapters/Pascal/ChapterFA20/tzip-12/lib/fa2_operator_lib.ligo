@@ -28,9 +28,9 @@ function validate_operator_owner_is_sender
 function validate_operators
   ( const transfer_param         : transfer_param
   ; const operators              : operators
-  ) : unit is block
-{ const operator : address = Tezos.sender
-; const owner : address = transfer_param.0
+  ) : unit is { 
+    const operator : address = Tezos.sender; 
+    const owner : address = transfer_param.0
 } with if owner = operator or Big_map.mem ((owner, operator), operators)
   then unit else failwith ("FA2_NOT_OPERATOR")
 
@@ -40,9 +40,9 @@ function validate_operators
 function add_operator
   ( const param     : operator_param
   ; const operators : operators
-  ) : operators is block
-{ validate_operator_owner_is_sender (param)
-; const operator_key : (owner * operator) = (param.0, param.1)
+  ) : operators is { 
+    validate_operator_owner_is_sender (param); 
+    const operator_key : (owner * operator) = (param.0, param.1)
 } with Big_map.update (operator_key, Some (unit), operators)
 
 (*
@@ -51,9 +51,9 @@ function add_operator
 function remove_operator
   ( const param     : operator_param
   ; const operators : operators
-  ) : operators is block
-{ validate_operator_owner_is_sender (param)
-; const operator_key : (owner * operator) = (param.0, param.1)
+  ) : operators is { 
+    validate_operator_owner_is_sender (param); 
+    const operator_key : (owner * operator) = (param.0, param.1)
 } with Big_map.remove (operator_key, operators)
 
 (*

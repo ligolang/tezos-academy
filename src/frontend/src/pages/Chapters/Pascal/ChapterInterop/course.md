@@ -82,10 +82,10 @@ type parameter is
  | Right of int
 
 function main (const p: parameter; const x: storage): (list(operation) * storage) is
-  ((nil: list(operation)), case p of
+  ((nil: list(operation)), case p of [
   | Left(i) -> x - i
   | Right(i) -> x + i
-  end)
+  ])
 ```
 
 The following contract sends a transaction to the previous contract.
@@ -97,12 +97,12 @@ type parameter is int
 
 type x is Left of int
 
-function main (const p: parameter; const s: storage): (list(operation) * storage) is block {
+function main (const p: parameter; const s: storage): (list(operation) * storage) is {
   const contract: contract(x) =
-    case (Tezos.get_entrypoint_opt("%left", ("tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx":address)): option(contract(x))) of
-    | Some (c) -> c
-    | None -> (failwith("not a correct contract") : contract(x))
-    end;
+    case (Tezos.get_entrypoint_opt("%left", ("tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx":address)): option(contract(x))) of [
+      | Some (c) -> c
+      | None -> (failwith("not a correct contract") : contract(x))
+    ];
 
   const result: (list(operation) * storage) = ((list [Tezos.transaction(Left(2), 2mutez, contract)]: list(operation)), s)
 } with result
@@ -233,16 +233,10 @@ This snippet of code shows
 type Michelson is michelson_pair_left_comb(l_record)
 
 function of_michelson (const f: michelson) : l_record is
-  block {
-    const p: l_record = Layout.convert_from_left_comb(f)
-  }
-  with p
+  Layout.convert_from_left_comb(f)
 
 function to_michelson (const f: l_record) : Michelson is
-  block {
-    const p: Michelson= Layout.convert_to_left_comb ((f: l_record))
-  }
-  with p
+  Layout.convert_to_left_comb ((f: l_record))
 ```
 
 #### Variant
@@ -262,16 +256,10 @@ type r is michelson_or_left_comb(vari)
 
 ```
 function of_michelson_or (const f: r) : vari is
-  block {
-    const p: vari = Layout.convert_from_left_comb(f)
-  }
-  with p
+  Layout.convert_from_left_comb(f)
 
 function to_michelson_or (const f: vari) : r is
-  block {
-    const p: r = Layout.convert_to_left_comb((f: vari))
-  }
-  with p
+  Layout.convert_to_left_comb((f: vari))
 ```
 
 ### Converting left combed Michelson data structures
@@ -305,7 +293,7 @@ type test is record [
   v: int;
 ]
 
-function make_concrete_sum (const r: z_to_v) : z_or is block {
+function make_concrete_sum (const r: z_to_v) : z_or is {
   const z: z_or = (M_left (unit) : z_or);
 
   const y_1: y_or = (M_left (unit): y_or);
@@ -324,36 +312,35 @@ function make_concrete_sum (const r: z_to_v) : z_or is block {
   const v_2: x_or = (M_right (v_3): x_or);
   const v_1: y_or = (M_right (v_2): y_or);
   const v: z_or = (M_right (v_1) : z_or);
-}
- with (case r of
+} with (case r of [
   | Z -> z
   | Y -> y
   | X -> x
   | W -> w
   | V -> v
-  end)
+  ])
 
 
 function make_concrete_record (const r: test) : (string * int * string * bool * int) is
   (r.z, r.y, r.x, r.w, r.v)
 
 function make_abstract_sum (const z_or: z_or) : z_to_v is
-  (case z_or of
+  (case z_or of [
   | M_left (n) -> Z
   | M_right (y_or) ->
-    (case y_or of
+    (case y_or of [
     | M_left (n) -> Y
     | M_right (x_or) ->
-        (case x_or of
+        (case x_or of [
         | M_left (n) -> X
         | M_right (w_or) ->
-            (case (w_or) of
+            (case (w_or) of [
             | M_left (n) -> W
             | M_right (n) -> V
-            end)
-        end)
-    end)
-  end)
+            ])
+        ])
+    ])
+  ])
 
 function make_abstract_record (const z: string; const y: int; const x: string; const w: bool; const v: int) : test is
   record [ z = z; y = y; x = x; w = w; v = v ]
@@ -366,7 +353,7 @@ Here is a simple contract that changes the item stored in the storage. The contr
 <!-- prettier-ignore -->Take a look at the ligo command that compiles the storage to Michelson :
 
 ```
-docker run --rm -v "$PWD":"$PWD" -w "$PWD" ligolang/ligo:next compile storage exercise.ligo 'record [ name= "3"; item_id= 2n; cost= 1n ]'
+ligo compile storage exercise.ligo 'record [ name= "3"; item_id= 2n; cost= 1n ]'
 ```
 
 which outputs to:

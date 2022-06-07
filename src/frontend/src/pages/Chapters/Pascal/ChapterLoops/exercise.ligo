@@ -40,8 +40,7 @@ var star_map : list (planet) := list [
   ];
 ]
 
-
-function scan (const l : list (planet)) : planet is block {
+function scan (const l : list (planet)) : planet is {
   var destination : planet := record [name=""; position=(0,0,0); density=0n; atmospheric_activity=False];
   // Type your solution below
 } with destination
