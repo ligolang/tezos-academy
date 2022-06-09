@@ -49,7 +49,7 @@ let incr_map (l : int list) : int list =
   List.map (fun (i : int) -> i + 1) l
 ```
 
-## Nested function
+## Nested function (also known as closures)
 
 It's possible to place functions inside other functions. These functions have access to variables in the same scope.
 

@@ -30,15 +30,19 @@ let c : tez = 5mutez + 0.000_010tez
 ## Subtraction
 
 Subtractions follow the same principles.
+⚠️ Even when subtracting two nats, the result is an int
 
 ```
 let a : int = 5 - 10
 let b : int = 5n - 2n
-let d : tez = 5mutez - 1mutez
 ```
 
-⚠️ Even when subtracting two nats, the result is an int
+⚠️ From protocol Ithaca onwards subtracting values of type tez yields an optional value (due to the michelson instruction *SUB_MUTEZ*)
 
+```
+let c : tez option = 5mutez - 1mutez (* Some (4mutez) *)
+let d : tez option = 1mutez - 5mutez (* None *)
+```
 
 ## Multiplication
 

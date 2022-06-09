@@ -37,14 +37,14 @@ Deployment of a smart contract in Tezos is called "origination".
 Here is the syntax of the tezos command line to deploy a smart contract :
 
 ```
-tezos-client originate contract <contract_name> for <user> transferring <amount_tez> from <from_user> \
-             running <tz_file> \
-             --init '<initial_storage>' --burn-cap <gaz_fee>
+tezos-client originate contract <contract_name> transferring <amount_tez> from <from_user> \
+  running <tz_file> \
+  --init '<initial_storage>' --burn-cap <gaz_fee>
 ```
 
 <contract_name> name given to the contract
 <tz_file> path of the Michelson smart contract code (TZ file).
-<amount_tez> is the quantity of tez being transferred to the newly deployed contract. If a contract balance reaches 0 then it is deactivated.
+<amount_tez> is the quantity of tez being transferred to the newly deployed contract.
 <from_user> account from which the tez are taken from (and transferred to the new contract).
 <initial_storage> is a Michelson expression. The --init parameter is used to specify initial state of the storage.
 <gaz_fee> it specifies the the maximal fee the user is willing to pay for this operation (using the --burn-cap parameter).
@@ -79,7 +79,7 @@ This LIGO compiler is also used to transform "LIGO expression" into "Michelson e
 Here is how to transform LIGO code into Michelson code using the LIGO compiler in command line.
 
 ```
-ligo compile-contract code.ligo mainFunc > code.tz
+ligo compile contract code.ligo > code.tz
 ```
 
 <mainFunc> argument is the name of the "main function" in the .ligo file. (see Chapter "Main Function").
@@ -91,27 +91,27 @@ ligo compile-contract code.ligo mainFunc > code.tz
 Here is how to transform LIGO expression into Michelson expression using the LIGO compiler in command line.
 
 ```
-ligo compile-storage [options] code.ligo mainFunc '<ligo_expression>'
+ligo compile storage code.ligo '<storage_expression>' [options]
 ```
 
-<ligo_expression> is a LIGO expression
+<storage_expression> is a LIGO expression
 
 ### Invocation parameter
 
 Here is how to transform LIGO expression into Michelson expression using the LIGO compiler in command line.
 
 ```
-ligo compile-parameter [options] code.ligo mainFunc '<ligo_expression>'
+ligo compile parameter code.ligo '<parameter_expression>' [options]
 ```
 
-<ligo_expression> is a LIGO expression
+<parameter_expression> is a LIGO expression
 
 ### Simulating
 
 Here is how to simulate the execution of an entry point using the LIGO compiler in command line.
 
 ```
-ligo dry-run [options] code.ligo mainFunc '<entrypoint(p)>' '<storage_state>'
+ligo run dry-run code.ligo '<entrypoint(p)>' '<storage_state>' [options]
 ```
 
 <storage*state> state of the storage when simulating the execution of the entry point
@@ -131,19 +131,18 @@ type return is (list(operation)  * storage)
 
 type parameter is AddPlanet of (string * coordinates) | DoNothing
 
-function addPlanet (const input : (string * coordinates); const store : storage) : return is
-block {
-    const modified : storage = case Map.find_opt(input.0, store) of
-      Some (p) -> (failwith("planet already exist") : storage)
+function addPlanet (const input : (string * coordinates); const store : storage) : return is {
+  const modified : storage = case Map.find_opt(input.0, store) of [
+    Some (_) -> (failwith("planet already exist") : storage)
     | None -> Map.add (input.0, input.1, store)
-    end;
+  ]
 } with ((nil :  list(operation)), modified)
 
 function main (const action : parameter; const store : storage) : return is
-block { skip } with case action of
-    AddPlanet (input) -> addPlanet (input,store)
-  | DoNothing -> ((nil : list(operation)),store)
-  end
+  case action of [
+      AddPlanet (input) -> addPlanet (input,store)
+    | DoNothing -> ((nil : list(operation)),store)
+  ]
 ```
 
 #### Maps
@@ -154,26 +153,26 @@ Initialization of elements of a map is specified between _map[_ and _]_ and elem
 map[ <key1> -> <value1>; <key2> -> <value2> ]
 ```
 
-Here is an example of a command line _ligo compile-storage_ for transpiling a map containing a tuple.
+Here is an example of a command line _ligo compile storage_ for transpiling a map containing a tuple.
 
 ```
-ligo compile-storage starmap.ligo main 'map [ "earth" -> (1,1,1) ]'
+ligo compile storage starmap.ligo 'map [ "earth" -> (1,1,1) ]'
 ```
 
 When specifying an empty map, one must cast the _map []_ into the expected type.
 
 ```
-ligo compile-storage starmap.ligo main '(map []: map(string,coordinates))'
+ligo compile storage starmap.ligo '(map []: map(string,coordinates))'
 ```
 
 #### Tuples
 
 Initialization of elements of a tuple is specified between _(_ and _)_ separated by comma _,_.
 
-Here is an example of a command line _ligo compile-storage_ for transpiling a map containing a tuple.
+Here is an example of a command line _ligo compile storage_ for transpiling a map containing a tuple.
 
 ```
-ligo compile-storage starmap.ligo main 'map [ "earth" -> (1,1,1) ]'
+ligo compile storage starmap.ligo 'map [ "earth" -> (1,1,1) ]'
 ```
 
 This command returns :
@@ -194,25 +193,25 @@ Let's modify our type _coordinates_ to be a record instead of a tuple.
 
 ```
 // starmap2.mligo
-type coordinates = record [
-  x = int;
-  y = int;
-  z = int
+type coordinates is record [
+  x : int;
+  y : int;
+  z : int
 ]
 
 ...
 
 function main (const action : parameter; const store : storage) : return is
-block { skip } with case action of
+  case action of [
     AddPlanet (input) -> addPlanet (input,store)
-  | DoNothing -> ((nil : list(operation)),store)
-  end
+    | DoNothing -> ((nil : list(operation)),store)
+  ]
 ```
 
-Here is an example of a command line _ligo compile-storage_ for transpiling a map containing a record tuple.
+Here is an example of a command line _ligo compile storage_ for transpiling a map containing a record tuple.
 
 ```
-ligo compile-storage starmap2.ligo main 'map [ "earth" -> record [x=1;y=1;z=1] ]'
+ligo compile storage starmap2.ligo 'map [ "earth" -> record [x=1;y=1;z=1] ]'
 ```
 
 This command returns :
@@ -239,26 +238,25 @@ type storage is record[
   name : string;
   systemplanets : planets
 ]
-type return is (list(operation)  * storage)
+type return is (list(operation) * storage)
 
 type parameter is AddPlanet of (string * coordinates) | DoNothing
 
-function addPlanet (const input : (string * coordinates); const store : storage) : return is
-block {
-    const modified : planets = case Map.find_opt(input.0, store.systemplanets) of
-      Some (p) -> (failwith("planet already exist") : planets)
+function addPlanet (const input : (string * coordinates); const store : storage) : return is {
+  const modified : planets = case Map.find_opt(input.0, store.systemplanets) of [
+      Some (_) -> (failwith("planet already exist") : planets)
     | None -> Map.add (input.0, input.1, store.systemplanets)
-    end;
+  ]
 } with ((nil :  list(operation)), record [name=store.name;systemplanets=modified])
 
 function main (const action : parameter; const store : storage) : return is
-block { skip } with case action of
-    AddPlanet (input) -> addPlanet (input,store)
-  | DoNothing -> ((nil : list(operation)),store)
-  end
+  case action of [
+      AddPlanet (input) -> addPlanet (input,store)
+    | DoNothing -> ((nil : list(operation)),store)
+  ]
 ```
 
-<!-- prettier-ignore -->1- Write the _compile-storage_ command and the LIGO expression for initializing the *Sol* system containing planet "earth" with coordinates (2,7,1).
+<!-- prettier-ignore -->1- Write the _compile storage_ command and the LIGO expression for initializing the *Sol* system containing planet "earth" with coordinates (2,7,1).
 
-<!-- prettier-ignore -->2- Write the _dry-run_ command and the LIGO expression for adding a planet "mars" with coordinates (4,15,2) in our *Sol* system. 
+<!-- prettier-ignore -->2- Write the _run dry-run_ command and the LIGO expression for adding a planet "mars" with coordinates (4,15,2) in our *Sol* system. 
 <!-- prettier-ignore -->⚠️ Remind that the _dry-run_ command expects a parameter "<entrypoint(p)>" and a parameter "<storage\_state>" as shown in Simulating section. For this _dry-run_ command you must write the "<entrypoint(p)>" parameter and reuse the *Sol* system of step 1 as "<storage\_state>" parameter.

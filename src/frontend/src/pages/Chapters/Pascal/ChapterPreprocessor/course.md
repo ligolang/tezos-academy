@@ -40,14 +40,14 @@ Pre-processor commands _#if_, _#else_ and _#endif_ allow to consider / ignore so
 #include "tzip-12/fa2_interface.religo"
 
 function substr_special (const s: string) : string is
-    String.sub (0n, 4n, s)
+  String.sub (0n, 4n, s)
 
 #else
 
 #include "test/fa2_int.religo"
 
 function substr_special (const s: string) : string is
-    String.sub (0n, 3n, s)
+  String.sub (0n, 3n, s)
 
 #endif
 ```

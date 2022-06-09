@@ -42,7 +42,13 @@ Subtractions follow the same principles.
 ```
 let a: int = 5 - 10;
 let b: int = (5 as nat) - (2 as nat); // Subtraction of two nats yields an int
-let d: tez = (5 as mutez) - (1 as mutez);
+```
+
+⚠️ From protocol Ithaca onwards subtracting values of type tez yields an optional value (due to the michelson instruction *SUB_MUTEZ*)
+
+```
+let c : tez option = 5mutez - 1mutez (* Some (4mutez) *)
+let d : tez option = 1mutez - 5mutez (* None *)
 ```
 
 ## Multiplication

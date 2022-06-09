@@ -73,7 +73,7 @@ function fa2_main( const action : fa2_entry_points; const store  : storage) : en
     end
 
 function main( const action : closed_parameter; const store  : storage) : entrypoint is 
-block { fail_on (Tezos.amount =/= 0tz, "XTZ_RECEIVED") // Validate whether the contract receives non-zero amount of tokens
+ { fail_on (Tezos.amount =/= 0tz, "XTZ_RECEIVED") // Validate whether the contract receives non-zero amount of tokens
 } with case action of
     FA2                   (params) -> fa2_main              (params, store)
   | Asset                 (params) -> custom_main           (params, store)

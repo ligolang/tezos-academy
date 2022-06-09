@@ -199,10 +199,10 @@ const main = (a: action, s: storage) : return_ => match(a, {
 
 Let's assume _TezosAcamedyToken_ has been deployed.
 
-Consider your account is _me_ (at address tz1SdT62G8tQp9fdHh4f2m4VtL8aGG6NUcmJ) which has been granted 1,000,000 token.
-Consider alice's account (at address tz1NiAGZgRV8F1E3qYFEPgajntzTRDYkU9h7)
+Consider your account is _me_ (at address tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6) which has been granted 1,000,000 token.
+Consider alice's account (at address tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb)
 
-<!-- prettier-ignore -->1- We want you to simulate the transfer of 2 TAT (Tezos Academy Token) to *alice*. Complete the ligo command line for preparing a storage state where you (tz1SdT62G8tQp9fdHh4f2m4VtL8aGG6NUcmJ) possess 1,000,000 tokens and no allowance. Write the storage state (all values of the storage must be filled).
+<!-- prettier-ignore -->1- We want you to simulate the transfer of 2 TAT (Tezos Academy Token) to *alice*. Complete the ligo command line for preparing a storage state where you (tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6) possess 1,000,000 tokens and no allowance. Write the storage state (all values of the storage must be filled).
 
 <!-- prettier-ignore -->2- Write a ligo command line for preparing the invocation of an *Approval* of 2 TAT (Tezos Academy Token) for *alice*.
 
@@ -211,21 +211,21 @@ Consider alice's account (at address tz1NiAGZgRV8F1E3qYFEPgajntzTRDYkU9h7)
 <!-- prettier-ignore -->4- Now that the ligo compiler ensured us that the simulation is good, we will try to simulate it with the tezos-client command line in order to know the right amount of gas needed to execute *approval*. You can consider that step 2 produced the following Michelson expression:
 
 ```
-(Left (Left (Left (Pair "tz1NiAGZgRV8F1E3qYFEPgajntzTRDYkU9h7" 2))))
+(Left (Left (Left (Pair "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" 2))))
 ```
 
 <!-- prettier-ignore -->5- Write a Tezos command line that simulates your invocation.
 
 <!-- prettier-ignore -->6- Now that the approval has been executed on the blockchain, 2 TAT can be transferred from your address to *alice*'s. Write a ligo command line for preparing the invocation of a *Transfer* of 2 TAT (Tezos Academy Token) from you to *alice*.
 
-<!-- prettier-ignore -->7- Write a ligo command line for preparing a simulated storage where you (tz1SdT62G8tQp9fdHh4f2m4VtL8aGG6NUcmJ) possess 1,000,000 tokens and an allowance is initialized with 2 TAT that can be transferred from *me* to *alice* (tz1NiAGZgRV8F1E3qYFEPgajntzTRDYkU9h7).
+<!-- prettier-ignore -->7- Write a ligo command line for preparing a simulated storage where you (tz1SdT62G8tQp9fdHh4f2m4VtL8aGG6NUcmJ) possess 1,000,000 tokens and an allowance is initialized with 2 TAT that can be transferred from *me* to *alice* (tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb).
 
 <!-- prettier-ignore -->8- Write a ligo command line that simulates your invocation of the previous *Transfer* on storage prepared at step 7. (Don't forget to specify that you are sending this transaction).
 
 <!-- prettier-ignore -->9- Now that the ligo compiler ensured us that the simulation is good, we will try to simulate it with the tezos-client command line in order to know the right amount of gas needed to run execute *transfer*. You can consider that step 6 produces the following Michelson expression:
 
 ```
-(Right (Pair (Pair "tz1SdT62G8tQp9fdHh4f2m4VtL8aGG6NUcmJ" "tz1NiAGZgRV8F1E3qYFEPgajntzTRDYkU9h7") 2))
+(Right (Pair (Pair "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6" "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb") 2))
 ```
 
 <!-- prettier-ignore -->10- Write a Tezos command line that simulates your *Transfer* invocation.

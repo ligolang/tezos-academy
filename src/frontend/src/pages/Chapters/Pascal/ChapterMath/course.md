@@ -30,11 +30,18 @@ const c : tez = 5mutez + 0.000_010tez
 ## Subtraction
 
 Subtractions follow the same principles.
+⚠️ Even when subtracting two nats, the result is an int
 
 ```
 const a : int = 5 - 10
 const b : int = 5n - 2n
-const d : tez = 5mutez - 1mutez
+```
+
+⚠️ From protocol Ithaca onwards subtracting values of type tez yields an optional value (due to the michelson instruction *SUB_MUTEZ*)
+
+```
+const c : option (tez) = 5mutez - 1mutez (* Some (4mutez) *)
+const d : option (tez) = 1mutez - 5mutez (* None *)
 ```
 
 ## Multiplication

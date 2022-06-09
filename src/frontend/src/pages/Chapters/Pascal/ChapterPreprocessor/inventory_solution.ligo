@@ -5,22 +5,21 @@
 #endif
 
 function removeFirst (const str: string) : string is
-    String.sub (0n, 1n, str)
+  String.sub (0n, 1n, str)
 
 function doSomethingInventory (const str: string) : string is
-    // Type your solution below
+  // Type your solution below
 #if EXTRA
-    doSomethingExtra(str)
+  doSomethingExtra(str)
 #else
-    removeFirst (str)
+  removeFirst (str)
 #endif
 
 type param is Apply of string
 
-function main (const p : param; const _store : string) : list(operation)* string is
-block {
-    const new_storage : string = case (p) of [
+function main (const p : param; const _store : string) : list(operation)* string is {
+  const new_storage : string = case (p) of [
     | Apply (str) -> doSomethingInventory(str)
-    ]
+  ]
     
 } with ((nil: list(operation)), new_storage)

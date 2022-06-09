@@ -7,7 +7,8 @@
 Booleans are typed _bool_ in LIGO :
 
 ```
-const a: bool = true // or false
+const a : bool = True   // Also: true
+const b : bool = False  // Also: false
 ```
 
 ## Comparing Values

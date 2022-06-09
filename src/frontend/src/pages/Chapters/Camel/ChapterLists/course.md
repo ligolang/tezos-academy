@@ -133,14 +133,14 @@ let sum_of_elements : int = Set.fold sum my_set 0
 
 ## Your mission
 
-<!-- prettier-ignore -->1- Define _itinary_ as a list of string names of celestial bodies representing your course. Start with _"earth"_
+<!-- prettier-ignore -->1- Define _itinerary_ as a list of string names of celestial bodies representing your course. Start with _"earth"_
 
-<!-- prettier-ignore -->2- On the next line, add _"sun"_ to the *itinary* and save it into a *longer\_itinary* constant.
+<!-- prettier-ignore -->2- On the next line, add _"sun"_ to the *itinerary* and save it into a *longer\_itinerary* constant.
 
-<!-- prettier-ignore -->2- On the next line, add _"alpha-centauri"_ to the *longer\_itinary* and save it into a *far\_itinary* constant.
+<!-- prettier-ignore -->2- On the next line, add _"alpha-centauri"_ to the *longer\_itinerary* and save it into a *far\_itinerary* constant.
 
-<!-- prettier-ignore -->⚠️ If you have installed LIGO then you can check the value of the *longer\_itinary* variable by running the following command:
+<!-- prettier-ignore -->⚠️ If you have installed LIGO then you can check the value of the *longer\_itinerary* variable by running the following command:
 
 ```
-ligo run interpret --init-file exercise.jsligo 'longer_itinary'
+ligo run interpret --init-file exercise.jsligo 'longer_itinerary'
 ```
