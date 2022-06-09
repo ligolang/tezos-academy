@@ -31,8 +31,8 @@ The keyword _None_ can be used in a pattern matching to verify the _option_ vari
 
 ```
 case <variable> of [
-| Some(<value_name>) -> <block_code>
-| None -> <block_code>
+  | Some(<value_name>) -> <block_code>
+  | None -> <block_code>
 ]
 ```
 
@@ -48,8 +48,8 @@ const user_balances: balance_type = map[ 1n -> 10 ];
 
 const my_balance : option(expected_type) = user_balances[1n];
 case my_balance of [
-  Some (val) -> block { skip }
-| None -> failwith ("Unknown user")
+  Some (val) -> skip
+  | None -> failwith ("Unknown user")
 ]
 ```
 
@@ -57,8 +57,8 @@ Here is an example of pattern matching resolving an _option_ type directly (usef
 
 ```
 const my_balance2 : expected_type = case user_balances[1n] of [
-  Some (val) -> val
-| None -> (failwith ("Unknown user") : expected_type)
+    Some (val) -> val
+  | None -> (failwith ("Unknown user") : expected_type)
 ]
 ```
 
@@ -68,4 +68,4 @@ const my_balance2 : expected_type = case user_balances[1n] of [
 
 <!-- prettier-ignore --> 1- Notice the _weapons_ mapping which maps the name of each weapon to its corresponding input of power. We want to increase the power of the _Main Laser_ but mapping returns optional results as they might not be found in the mapping. Define the constant *main\_laser\_power* as an optional int from selecting _"Main Laser"_ from the _weapons_ mapping.
 
-<!-- prettier-ignore --> 2- Writte a pattern matching for *main\_laser\_power*. If it exists, increase the power of the _"Main Laser"_ by 1 (use *i* as temporary matching variable). If it does not exist in the mapping, fail with _"Weapon not found"_
+<!-- prettier-ignore --> 2- Write a pattern matching for *main\_laser\_power*. If it exists, increase the power of the _"Main Laser"_ by 1 (use *i* as temporary matching variable). If it does not exist in the mapping, fail with _"Weapon not found"_

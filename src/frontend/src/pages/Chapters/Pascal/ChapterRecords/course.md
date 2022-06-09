@@ -37,10 +37,8 @@ const alice_is_admin : bool = alice.is_admin
 You can modify values in a record as follows :
 
 ```
-function change_name (const u : user) : user is
-  block {
-      const u : user = u with record [name = "Mark"]
-  } with u
+function change_name (const u : user) : user is 
+  u with record [name = "Mark"]
 ```
 
 ⚠️ Note that user has not been changed by the function. Rather, the function returned a nameless new version of it with the modified name.
@@ -51,9 +49,7 @@ A patch takes a record to be updated and a record with a subset of the fields to
 
 ```
 function change_name (const u : user) : user is
-  block {
-      patch u with record [name = "Mark"]
-  } with u
+  patch u with record [name = "Mark"]
 ```
 
 ## Your mission
