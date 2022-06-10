@@ -73,9 +73,9 @@ type parameter is
 | Default  of unit
 
 (* Function executed when {threshold} approvals has been reached  *)
-function execute_action(const str : string; const s : storage ) : list(operation) is block {
+function execute_action(const str : string; const s : storage ) : list(operation) is {
   var listop : list(operation) := list [];
-  if (String.sub(1n,1n,str) = "3") then block {
+  if (String.sub(1n,1n,str) = "3") then {
     const ci_opt : option(contract(action)) = Tezos.get_contract_opt(s.target_contract);
     const op : operation = case ci_opt of [
       Some(ci) -> Tezos.transaction(Increment(3), 0tz, ci)
@@ -83,38 +83,32 @@ function execute_action(const str : string; const s : storage ) : list(operation
     ];
     listop := list [op; ];
   }
-  else skip
 } with listop
 
-function send (const param : message; var s : storage) : return is
-  block {
+function send (const param : message; var s : storage) : return is {
     // check sender against the authorized addresses
     if not Set.mem (Tezos.sender, s.authorized_addresses)
-    then failwith("Unauthorized address")
-    else skip;
+      then failwith("Unauthorized address");
 
     // check message size against the stored limit
     var msg : message := param;
     const packed_msg : bytes = Bytes.pack (msg);
     if Bytes.length (packed_msg) > s.max_message_size
-    then failwith ("Message size exceed maximum limit")
-    else skip;
+      then failwith ("Message size exceed maximum limit");
 
     (* compute the new set of addresses associated with the message and update counters *)
     var new_store : addr_set := set [];
     const voters_opt : option(addr_set) = Map.find_opt (packed_msg, s.message_store);
     case voters_opt of [
-      Some (voters) ->
-        block {
+      Some (voters) -> {
           (* The message is already stored. Increment the counter only if the sender is not already associated with the message. *)
-          if Set.mem (Tezos.sender, voters)
-          then skip
-          else s.proposal_counters[Tezos.sender] :=
-                 get_force (Tezos.sender, s.proposal_counters) + 1n;
-                 new_store := Set.add (Tezos.sender,voters)
+          if not (voters contains Tezos.sender)
+          then {
+            s.proposal_counters[Tezos.sender] := Option.unopt(s.proposal_counters[Tezos.sender]) + 1n;
+            new_store := Set.add (Tezos.sender,voters)
+          }
         }
-    | None ->
-        block {
+    | None -> {
           // the message has never been received before
           s.proposal_counters := case Map.find_opt (Tezos.sender, s.proposal_counters) of [
             Some(count) -> Map.update(Tezos.sender, Some(count + 1n), s.proposal_counters)
@@ -125,10 +119,9 @@ function send (const param : message; var s : storage) : return is
     ];
 
     // check sender counters against the maximum number of proposal
-    var sender_proposal_counter : nat := get_force (Tezos.sender, s.proposal_counters);
+    var sender_proposal_counter : nat := Option.unopt(s.proposal_counters[Tezos.sender]);
     if sender_proposal_counter > s.max_proposal
-    then failwith ("Maximum number of proposal reached")
-    else skip;
+      then failwith ("Maximum number of proposal reached");
 
     // check the threshold
     var ret_ops : list (operation) := nil;
@@ -139,30 +132,26 @@ function send (const param : message; var s : storage) : return is
       // update the state hash
       s.state_hash := Crypto.sha256 (Bytes.concat (s.state_hash, packed_msg));
       // decrement the counters
-      for addr -> ctr in map s.proposal_counters block {
+      for addr -> ctr in map s.proposal_counters {
         if Set.mem (addr, new_store) then
           s.proposal_counters[addr] := abs (ctr - 1n)
-        else skip
       }
     } else s.message_store[packed_msg] := new_store;
   } with (ret_ops, s)
 
-function withdraw (const param : message; var s : storage) : return is
-  block {
+function withdraw (const param : message; var s : storage) : return is {
     var message : message := param;
     const packed_msg : bytes = Bytes.pack (message);
 
     case s.message_store[packed_msg] of [
-      Some (voters) ->
-        block {
+      Some (voters) -> {
           // The message is stored
           const new_set : addr_set = Set.remove (Tezos.sender, voters);
 
           (* Decrement the counter only if the sender was already associated with the message *)
           if Set.cardinal (voters) =/= Set.cardinal (new_set)
           then s.proposal_counters[Tezos.sender] :=
-                 abs (get_force (Tezos.sender, s.proposal_counters) - 1n)
-          else skip;
+                 abs(Option.unopt(s.proposal_counters[Tezos.sender]) - 1n);
 
           (* If the message is left without any associated addresses, remove the corresponding message_store field *)
           if Set.cardinal (new_set) = 0n
@@ -185,7 +174,6 @@ function main (const param : parameter; const s : storage) : return  is
     (* Use this action to transfer tez to the contract *)
     | Default (p) -> default (p, s)
   ]
-
 ```
 
 Notice that in the _Send_ function the number of voters is compared to the threshold. If the threshold is reached then:
@@ -204,10 +192,9 @@ Notice that in the _Send_ function the number of voters is compared to the thres
     // update the state hash
     s.state_hash := Crypto.sha256 (Bytes.concat (s.state_hash, packed_msg));
     // decrement the counters
-    for addr -> ctr in map s.proposal_counters block {
+    for addr -> ctr in map s.proposal_counters {
       if Set.mem (addr, new_store) then
         s.proposal_counters[addr] := abs (ctr - 1n)
-      else skip
     }
   }
 ```

@@ -15,8 +15,7 @@ const age: int = 25
 Variables, unlike constants, are mutable. They cannot be declared in a global scope, but they can be declared and used within functions, or as function parameters.
 
 ```
-let add = (const a: int, const b: int): int is
-  block {
+let add = (const a: int, const b: int): int is {
     var c: int := a;
     c := c + b
   } with c

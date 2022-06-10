@@ -9,7 +9,7 @@ LIGO integrates 2 kinds of loops. General while iterations and bounded for loops
 While loops are defined as follows :
 
 ```
-while <condition> block {
+while <condition> {
     <operations>
 }
 ```
@@ -23,7 +23,7 @@ while <condition> block {
 For-loops iterates over bounded intervals :
 
 ```
-for <variable assignment> to <upper bound> block {
+for <variable assignment> to <upper bound> {
     <operations>
 }
 ```
@@ -32,7 +32,7 @@ For instance :
 
 ```
 var acc : int := 0;
-for i := 1 to 10 block {
+for i := 1 to 10 {
     acc := acc + i
 }
 ```
@@ -42,7 +42,7 @@ for i := 1 to 10 block {
 For-loops can also iterate through the contents of a collection, that is, a list, a set or a map. This is done with :
 
 ```
-for <element var> in <collection type> <collection var> block {
+for <element var> in <collection type> <collection var> {
     <operations>
 }
 ```
@@ -50,9 +50,9 @@ for <element var> in <collection type> <collection var> block {
 Here is an example where the integers in a list are summed up.
 
 ```
-function sum_list (var l : list (int)) : int is block {
+function sum_list (var l : list (int)) : int is {
   var total : int := 0;
-  for i in list l block {
+  for i in list l {
     total := total + i
   }
 } with total
