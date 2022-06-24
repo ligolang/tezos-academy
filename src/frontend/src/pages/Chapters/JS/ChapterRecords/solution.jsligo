@@ -8,7 +8,7 @@ type coordinates = {
 let earth_coordinates: coordinates = {
     x: 2,
     y: 7,
-    z: 1,
+    z: 1
 };
 
 let modified_earth_coordinates = {...earth_coordinates, z: 5}; 
