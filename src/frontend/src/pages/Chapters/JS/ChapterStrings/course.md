@@ -41,14 +41,12 @@ const slice: string = String.sub(0 as nat, 1 as nat, name);
 
 ⚠️ Notice that the offset and length of the sub function are natural numbers.
 
-If you want to concatenate to substrings you need to add an empty string before the expression to help Ligo make a proper type conversion:
+Strings can be concatenated using the + operator.
 
 ```
 const name: string = "Captain Rogers";
-const slice: string = "" + String.sub(8 as nat, 6 as nat, name) + ", welcome on board!";
+const slice: string = String.sub(8 as nat, 6 as nat, name) + ", welcome on board!";
 ```
-
-⚠️ Notice that in more mature versions of JsLIGO this might be not necessary.
 
 ## Length of Strings
 
