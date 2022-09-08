@@ -15,7 +15,7 @@ export const HomeView = () => {
           <HomeHeaderLeft>
             <h1>Learn to code Tezos Smart Contracts the easy way!</h1>
             <p>Tezos Academy is a fun interactive tutorial to the LIGO language</p>
-            <Link to="/pascal/chapter-about">
+            <Link to="/js/chapter-about">
               <Button>
                 <ButtonBorder />
                 <ButtonText onClick={() => { }}>
