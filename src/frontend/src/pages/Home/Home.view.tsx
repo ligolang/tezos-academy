@@ -98,7 +98,7 @@ export const HomeView = () => {
         <HomeFooterGrid>
           <div>
             <img alt="logo" src="/images/logo.svg" />
-            <a href="https://github.com/AymericBethencourt/tezos-academy" target="_blank">
+            <a href="https://github.com/ligolang/tezos-academy" target="_blank">
               Github
             </a>
           </div>
