@@ -4,7 +4,7 @@
   "scripts": {
     "start": "lerna exec -- yarn run --parallel start",
     "build": "lerna exec -- yarn run --parallel build",
-    "lint": "eslint '**/*.{js,jsx}'",
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "npm run lint -- --fix",
     "prettier": "prettier -l '**/*.{js,jsx,ts,tsx,json,md}'",
     "test": "lerna run --parallel test",
@@ -14,7 +14,7 @@
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.1.0",
+    "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-sinon": "^4.0.0",
     "eslint-config-standard": "^14.1.1",
