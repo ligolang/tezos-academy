@@ -11,7 +11,7 @@ let doSomethingInventory = (str: string) : string => {
 
 type param = | ["Apply", string];
 
-const main = ([p, _store]: [param, string]) : [list<operation>, string] => ([
+const main = (p: param, _store: string) : [list<operation>, string] => ([
     list([]) as list<operation>, 
     match(p, {
         Apply: (str: string) => doSomethingInventory(str)

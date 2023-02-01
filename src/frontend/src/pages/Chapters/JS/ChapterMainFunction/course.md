@@ -24,7 +24,7 @@ type parameter = nat;
 type storage = nat;
 type return_ = [list<operation>, storage];
 
-let save =([action, store]: [parameter, storage]) : return_ =>
+let save =(action: parameter, store: storage) : return_ =>
   [(list([]) as list<operation>), store]
 ```
 
@@ -50,16 +50,16 @@ type storage = {
 
 type return_ = [list<operation>, storage];
 
-let entry_A = ([input_string, store]: [string, storage]): return_ =>
+let entry_A = (input_string: string, store: storage): return_ =>
   [(list([]) as list<operation>), {...store, stored_string_A: input_string}];
 
-let entry_B = ([input_string, store]: [string, storage]): return_ =>
+let entry_B = (input_string: string, store: storage): return_ =>
   [(list([]) as list<operation>), {...store, stored_string_B: input_string}];
 
-let main = ([action, store]: [parameter, storage]): return_ =>
+let main = (action: parameter, store: storage): return_ =>
   match(action, {
-    Action_A: (input_string: string) => entry_A([input_string, store]),
-    Action_B: (input_string: string) => entry_B([input_string, store])
+    Action_A: (input_string: string) => entry_A(input_string, store),
+    Action_B: (input_string: string) => entry_B(input_string, store)
   });
 ```
 

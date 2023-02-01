@@ -7,7 +7,7 @@ The _option_ type is a predefined variant type that is used to express whether t
 An example in arithmetic is the division operation:
 
 ```
-let div = ([a, b]: [nat, nat]): option<nat> => {
+let div = (a: nat, b: nat): option<nat> => {
   if(b == (0 as nat)){
     return (None() as option <nat>);
   } else {

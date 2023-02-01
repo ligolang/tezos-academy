@@ -11,13 +11,13 @@ Functions in JsLIGO are defined using the let or const keyword, like other value
 Here is how you define a basic function that sums two integers:
 
 ```
-let add = ([a, b]: [int, int]): int => a + b;
+let add = (a: int, b: int): int => a + b;
 ```
 
 If the body contains more than a single expression, you use block between braces:
 
 ```
-let myFun = ([x, y]: [int, int]): int => {
+let myFun = (x: int, y: int): int => {
   let doubleX = x + x;
   let doubleY = y + y;
   return doubleX + doubleY;
@@ -29,13 +29,13 @@ Note that JsLIGO, like JavaScript, requires the return keyword to indicate what 
 <!-- prettier-ignore -->By default, LIGO will warn about unused arguments inside functions. In case we do not use an argument, we can use the wildcard _\__ to prevent warnings. Either use _\__ instead of the argument identifier:
 
 ```
-let k = ([x, _] : [int, int]) : int => x;
+let k = (x: int, _: int) : int => x;
 ```
 
 or use an identifier starting with wildcard:
 
 ```
-let k = ([x, _y] : [int, int]) : int => x;
+let k = (x: int, _y: int) : int => x;
 ```
 
 ## Anonymous functions (a.k.a. lambdas)
