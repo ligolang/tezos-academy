@@ -39,7 +39,7 @@ const execute_action = (str: string, s: storage) : list<operation> => {
 
 const send = (param: message, s: storage) : return_ => {
     // check sender against the authorized addresses
-    if (!Set.mem(Tezos.sender, s.authorized_addresses)) {
+    if (!Set.mem(Tezos.get_sender(), s.authorized_addresses)) {
         failwith("Unauthorized address");
     } else {
         unit;
@@ -54,14 +54,14 @@ const send = (param: message, s: storage) : return_ => {
     const new_voters : addr_set = match(voters_opt, {
         Some: (voters: addr_set) => {
             // The message is already stored. Increment the counter only if the sender is not already associated with the message.
-            if (Set.mem(Tezos.sender, voters)) {
+            if (Set.mem(Tezos.get_sender(), voters)) {
                 return Set.empty as addr_set;
             } else {
-                return Set.add(Tezos.sender, voters);
+                return Set.add(Tezos.get_sender(), voters);
             };
         },
         None: () => {
-            return Set.add(Tezos.sender, Set.empty as addr_set);
+            return Set.add(Tezos.get_sender(), Set.empty as addr_set);
         }
     });
 
@@ -94,7 +94,7 @@ const withdraw = (param: message, s: storage) : return_ => {
 
     return match(Map.find_opt(packed_msg, s.message_store), {
         Some: (voters: addr_set) => { // The message is stored
-            const new_set: addr_set = Set.remove(Tezos.sender, voters);
+            const new_set: addr_set = Set.remove(Tezos.get_sender(), voters);
 
             // If the message is left without any associated addresses, remove the corresponding message_store field
             const message_store_updated: message_store = (() : message_store => {

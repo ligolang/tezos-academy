@@ -14,7 +14,7 @@ A LIGO smart contract can query part of the state of the Tezos blockchain by mea
 
 <!-- prettier-ignore -->*Tezos.self\_address* : Get the address of the currently running contract.
 
-<!-- prettier-ignore -->*Tezos.get\_source* : Get the originator (address) of the current transaction. That is, if a chain of transactions led to the current execution get the address that began the chain. Not to be confused with Tezos.sender, which gives the address of the contract or user which directly caused the current transaction.
+<!-- prettier-ignore -->*Tezos.get\_source* : Get the originator (address) of the current transaction. That is, if a chain of transactions led to the current execution get the address that began the chain. Not to be confused with Tezos.get_sender, which gives the address of the contract or user which directly caused the current transaction.
 
 <!-- prettier-ignore -->*Tezos.get\_chain\_id* : Get the identifier of the chain to distinguish between main and test chains.
 
@@ -32,7 +32,7 @@ _<string_message>_ must be a string value
 
 ## Access Control
 
-This example shows how Tezos.source can be used to deny access to an entrypoint.
+This example shows how Tezos.get_source can be used to deny access to an entrypoint.
 
 ```
 const owner: address = ("tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" as address);
