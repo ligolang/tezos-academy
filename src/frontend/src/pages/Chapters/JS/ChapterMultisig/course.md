@@ -84,7 +84,7 @@ const execute_action = (str: string, s: storage) : list<operation> => {
 
 const send = (param: message, s: storage) : return_ => {
     // check sender against the authorized addresses
-    if (!Set.mem(Tezos.sender, s.authorized_addresses)) {
+    if (!Set.mem(Tezos.get_sender(), s.authorized_addresses)) {
         failwith("Unauthorized address");
     } else {
         unit;
@@ -104,28 +104,28 @@ const send = (param: message, s: storage) : return_ => {
     const [new_store, proposal_counters_updated] : [addr_set, proposal_counters] = match(voters_opt, {
         Some: (voters: addr_set) => {
             // The message is already stored. Increment the counter only if the sender is not already associated with the message.
-            if (Set.mem(Tezos.sender, voters)) {
+            if (Set.mem(Tezos.get_sender(), voters)) {
                 return [Set.empty as addr_set, s.proposal_counters];
             } else {
-                const updated: proposal_counters = match(Map.find_opt(Tezos.sender, s.proposal_counters), {
-                    Some: (count: nat) => Map.update(Tezos.sender, Some(count + (1 as nat)), s.proposal_counters),
-                    None: () => Map.add(Tezos.sender, 1 as nat, s.proposal_counters)
+                const updated: proposal_counters = match(Map.find_opt(Tezos.get_sender(), s.proposal_counters), {
+                    Some: (count: nat) => Map.update(Tezos.get_sender(), Some(count + (1 as nat)), s.proposal_counters),
+                    None: () => Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
                 });
-                return [Set.add(Tezos.sender, voters), updated];
+                return [Set.add(Tezos.get_sender(), voters), updated];
             };
         },
         None: () => {
             // the message has never been received before
-            const updated: proposal_counters = match(Map.find_opt(Tezos.sender, s.proposal_counters), {
-                Some: (count: nat) => Map.update(Tezos.sender, Some(count + (1 as nat)), s.proposal_counters),
-                None: () => Map.add(Tezos.sender, 1 as nat, s.proposal_counters)
+            const updated: proposal_counters = match(Map.find_opt(Tezos.get_sender(), s.proposal_counters), {
+                Some: (count: nat) => Map.update(Tezos.get_sender(), Some(count + (1 as nat)), s.proposal_counters),
+                None: () => Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
             });
-            return [Set.add(Tezos.sender, Set.empty as addr_set), updated];
+            return [Set.add(Tezos.get_sender(), Set.empty as addr_set), updated];
         }
     });
 
     // check sender counters against the maximum number of proposal
-    const sender_proposal_counter: nat = match(Map.find_opt(Tezos.sender, proposal_counters_updated), {
+    const sender_proposal_counter: nat = match(Map.find_opt(Tezos.get_sender(), proposal_counters_updated), {
         Some: (count: nat) => count,
         None: () => 0 as nat
     });
@@ -173,14 +173,14 @@ const withdraw = (param: message, s: storage) : return_ => {
 
     return match(Map.find_opt(packed_msg, s.message_store), {
         Some: (voters: addr_set) => { // The message is stored
-            const new_set: addr_set = Set.remove(Tezos.sender, voters);
+            const new_set: addr_set = Set.remove(Tezos.get_sender(), voters);
 
             // Decrement the counter only if the sender was already associated with the message
             const proposal_counters_updated: proposal_counters = (() : proposal_counters => {
                if (Set.size(voters) != Set.size(new_set)) {
-                 return match(Map.find_opt(Tezos.sender, s.proposal_counters), {
-                     Some: (count: nat) => Map.update(Tezos.sender, Some(abs(count - (1 as nat))), s.proposal_counters),
-                     None: () => Map.add(Tezos.sender, 1 as nat, s.proposal_counters)
+                 return match(Map.find_opt(Tezos.get_sender(), s.proposal_counters), {
+                     Some: (count: nat) => Map.update(Tezos.get_sender(), Some(abs(count - (1 as nat))), s.proposal_counters),
+                     None: () => Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
                  });
                } else { return s.proposal_counters; };
             })();

@@ -3,12 +3,12 @@ let purchase = (purchase_price : tez) : bool => {
   const vendor_address: address = ("tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" as address);
 
   // Type your solution below
-  if (Tezos.source != ship_address) {
+  if (Tezos.get_source() != ship_address) {
       failwith ("Access denied");
   } else {
       unit; 
   };
-  if (Tezos.amount != purchase_price) {
+  if (Tezos.get_amount() != purchase_price) {
       failwith ("Incorrect amount");
   } else {
       unit; 

@@ -109,11 +109,11 @@ type action =
 
 const transfer = (p: transfer, s: storage) : return_ => {
     const new_allowances = (() : allowances => { 
-        if (Tezos.sender == p.address_from) {
+        if (Tezos.get_sender() == p.address_from) {
             return s.allowances;
         } else {
             const authorized_value = match(Big_map.find_opt(
-                [Tezos.sender, p.address_from], s.allowances), {
+                [Tezos.get_sender(), p.address_from], s.allowances), {
                     Some: (value: nat) => value,
                     None: () => 0 as nat
                 }
@@ -122,7 +122,7 @@ const transfer = (p: transfer, s: storage) : return_ => {
                 failwith("Not Enough Allowance");
             } else { 
                 return Big_map.update(
-                    [Tezos.sender, p.address_from], 
+                    [Tezos.get_sender(), p.address_from],
                     Some(abs(authorized_value - p.value)), 
                     s.allowances
                );
@@ -150,14 +150,14 @@ const transfer = (p: transfer, s: storage) : return_ => {
 };
 
 const approve = (p: approve, s: storage) : return_ => {
-    let previous_value = match(Big_map.find_opt([p.spender, Tezos.sender], s.allowances), {
+    let previous_value = match(Big_map.find_opt([p.spender, Tezos.get_sender()], s.allowances), {
         Some: (value: nat) => value,
         None: () => 0 as nat
     });
     if (previous_value > (0 as nat) && p.value > (0 as nat)) {
         failwith("Unsafe Allowance Change") as return_; 
     } else {
-        const new_allowances = Big_map.update([p.spender, Tezos.sender], Some(p.value), s.allowances);
+        const new_allowances = Big_map.update([p.spender, Tezos.get_sender()], Some(p.value), s.allowances);
         return [list([]) as list<operation>, { ...s, allowances: new_allowances}];
     };
 };
