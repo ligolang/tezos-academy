@@ -40,10 +40,13 @@ jobs:
           node-version: 16
           cache: "yarn"
           cache-dependency-path: 'yarn.lock'
+      - name: Install dependencies
+        run: yarn install
       - name: Build Project
-        run: |
-          yarn install
-          yarn build
+        run: yarn build
+        env:
+          # Must set CI to false because otherwise warnings are treated as errors
+          CI: false
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
