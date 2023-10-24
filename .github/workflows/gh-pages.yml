@@ -36,6 +36,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
+          # We get OpenSSL error if we have newer versions
+          node-version: 16
           cache: "yarn"
           cache-dependency-path: 'yarn.lock'
       - name: Build Project
