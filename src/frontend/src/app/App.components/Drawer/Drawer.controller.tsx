@@ -15,14 +15,12 @@ export const Drawer = () => {
   const history = useHistory()
 
   let defaultLanguage = 'JsLIGO'
-  if (pathname.match(/pascal/i)) defaultLanguage = 'PascaLIGO'
   if (pathname.match(/js/i)) defaultLanguage = 'JsLIGO'
   if (pathname.match(/camel/i)) defaultLanguage = 'CameLIGO'
   const [activeLanguage, setActiveLanguage] = useState(defaultLanguage)
 
   useEffect(() => {
     let defaultLanguage = 'JsLIGO'
-    if (pathname.match(/pascal/i)) defaultLanguage = 'PascaLIGO'
     if (pathname.match(/js/i)) defaultLanguage = 'JsLIGO'
     if (pathname.match(/camel/i)) defaultLanguage = 'CameLIGO'
     setActiveLanguage(defaultLanguage)
@@ -35,16 +33,12 @@ export const Drawer = () => {
   function removeAuthUserCallback() { }
 
   function changeLanguageCallback(e: string) {
-    if (e === 'PascaLIGO') {
-      history.push(pathname.replace(new RegExp('camel|reason|js', 'i'), 'pascal'))
-      setActiveLanguage('PascaLIGO')
-    }
     if (e === 'JsLIGO') {
-      history.push(pathname.replace(new RegExp('camel|reason|pascal', 'i'), 'js'))
+      history.push(pathname.replace(new RegExp('camel|reason', 'i'), 'js'))
       setActiveLanguage('JsLIGO')
     }
     if (e === 'CameLIGO') {
-      history.push(pathname.replace(new RegExp('pascal|reason|js', 'i'), 'camel'))
+      history.push(pathname.replace(new RegExp('reason|js', 'i'), 'camel'))
       setActiveLanguage('CameLIGO')
     }
   }
