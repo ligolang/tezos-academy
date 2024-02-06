@@ -14,15 +14,13 @@ type UserViewProps = {
 
 export const UserView = ({ loading, user }: UserViewProps) => {
   let badgeUnlocked = false
-  let pascalCounter = 0
   let camelCounter = 0
   let jsCounter = 0
   user.progress?.forEach((chapter) => {
-    if (chapter.indexOf('pascal') >= 0) pascalCounter++
     if (chapter.indexOf('camel') >= 0) camelCounter++
     if (chapter.indexOf('js') >= 0) jsCounter++
   })
-  if (pascalCounter >= 30 || camelCounter >= 30 || jsCounter >= 30) badgeUnlocked = true
+  if (camelCounter >= 30 || jsCounter >= 30) badgeUnlocked = true
 
   return (
     <UserStyled>
@@ -37,7 +35,7 @@ export const UserView = ({ loading, user }: UserViewProps) => {
           ) : (
             <p>
               To obtain this badge, you need to complete the missions of all chapters from 1 track of language below,
-              for instance the 30 chapters of the Pascal language.
+              for instance the 30 chapters of the JavaScript language.
             </p>
           )}
         </UserBadge>

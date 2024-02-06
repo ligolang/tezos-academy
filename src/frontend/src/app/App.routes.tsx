@@ -34,17 +34,11 @@ export const AppRoutes = ({ location }: any) => (
     <Route exact path="/change-password">
       <ChangePassword />
     </Route>
-    <Route exact path="/pascal/chapter-about">
-      <ChapterAbout />
-    </Route>
     <Route exact path="/js/chapter-about">
       <ChapterAbout />
     </Route>
     <Route exact path="/camel/chapter-about">
       <ChapterAbout />
-    </Route>
-    <Route path="/pascal/chapter-*">
-      <Chapter />
     </Route>
     <Route path="/js/chapter-*">
       <Chapter />

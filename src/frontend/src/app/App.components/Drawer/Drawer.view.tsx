@@ -20,8 +20,6 @@ export const DrawerView = ({
   showing,
   hideCallback,
   pathname,
-  user,
-  removeAuthUserCallback,
   changeLanguageCallback,
   activeLanguage,
 }: DrawerViewProps) => (
@@ -31,7 +29,7 @@ export const DrawerView = ({
       <h1>Menu</h1>
 
       <Select
-        options={['PascaLIGO', 'CameLIGO', 'JsLIGO']}
+        options={['CameLIGO', 'JsLIGO']}
         defaultOption={activeLanguage}
         selectCallback={(e) => changeLanguageCallback(e)}
       />

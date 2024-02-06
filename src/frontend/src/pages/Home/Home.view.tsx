@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { Button, ButtonBorder, ButtonText } from '../ChapterAbout/ChapterAbout.style'
 //prettier-ignore
-import { HomeAdventure, HomeAlert, HomeAlertBand, HomeAlertText, HomeBadge, HomeBadgeGrid, HomeEditor, HomeFooter, HomeFooterGrid, HomeHeader, HomeHeaderGrid, HomeHeaderLeft, HomeHeaderOcto, HomeHeaderRight, HomeLanguage, HomeLanguageGrid, HomeStyled } from './Home.style'
+import { HomeAdventure, HomeEditor, HomeFooter, HomeFooterGrid, HomeHeader, HomeHeaderGrid, HomeHeaderLeft, HomeHeaderRight, HomeLanguage, HomeLanguageGrid, HomeStyled } from './Home.style'
 
 export const HomeView = () => {
   const isMobile = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <= 600
@@ -41,21 +41,6 @@ export const HomeView = () => {
         <h1>Choose your language</h1>
         <p>Tezos Academy is compatible with PascaLIGO, CameLIGO and JsLIGO</p>
         <HomeLanguageGrid>
-          <div>
-            <h3>PascalLIGO</h3>
-            <p>PascaLIGO has a syntax close to Pascal, great for simplicity.</p>
-            <img alt="pascal" src="/images/pascal.svg" />
-            <Link to="/pascal/chapter-about">
-              <Button>
-                <ButtonBorder />
-                <ButtonText onClick={() => { }}>
-                  <img alt="rocket" src="/icons/rocket.svg" />
-                  START WITH PASCAL
-                </ButtonText>
-              </Button>
-            </Link>
-          </div>
-
           <div>
             <h3>CameLIGO</h3>
             <p>CameLIGO has a syntax close to OCaml, great for leaning formal languages.</p>

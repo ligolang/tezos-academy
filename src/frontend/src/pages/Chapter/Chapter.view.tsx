@@ -48,7 +48,7 @@ const MonacoReadOnly = ({ children }: any) => {
       <Editor
         height={height}
         value={children}
-        language="pascaligo"
+        language="jsligo"
         theme={monacoTheme}
         options={{
           ...monacoFontOpt,
@@ -66,7 +66,7 @@ const MonacoReadOnly = ({ children }: any) => {
 const MonacoEditorSupport = ({ support }: any) => {
   return (
     <div>
-      <Editor height="500px" value={support} language="pascaligo" theme={monacoTheme} options={monacoFontOpt} />
+      <Editor height="500px" value={support} language="jsligo" theme={monacoTheme} options={monacoFontOpt} />
     </div>
   )
 }
@@ -77,7 +77,7 @@ const MonacoEditor = ({ proposedSolution, proposedSolutionCallback }: any) => {
       <Editor
         height="500px"
         value={proposedSolution}
-        language="pascaligo"
+        language="jsligo"
         theme={monacoTheme}
         onChange={(val, _) => proposedSolutionCallback(val)}
         options={{ ...monacoFontOpt, readOnly: false }}
@@ -93,7 +93,7 @@ const MonacoDiff = ({ solution, proposedSolution }: any) => {
         height="500px"
         original={proposedSolution}
         modified={solution}
-        language="pascaligo"
+        language="jsligo"
         // @ts-ignore
         theme={monacoTheme}
         options={{ ...monacoFontOpt, readOnly: false }}
@@ -192,7 +192,6 @@ export const ChapterView = ({
   const { pathname } = useLocation()
 
   let extension = ''
-  if (pathname.match(/pascal/i)) extension = 'ligo'
   if (pathname.match(/js/i)) extension = 'jsligo'
   if (pathname.match(/camel/i)) extension = 'mligo'
 
