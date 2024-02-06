@@ -1,6 +1,6 @@
 # Chapter 9 : Records
 
-<dialog character="pilot">Thanks for the coordinates captain but I'm not sure I understand which value corresponds to which coordinate. You mean x,y,z ? You may want to be more explicit.</dialog>
+<dialog character="pilot">Thanks for the coordinates, Captain, but I'm not sure I understand which value corresponds to which coordinate. You mean x, y, z? You may want to be more explicit.</dialog>
 
 Records are like tuples but with named parameters. In other words, they hold a set of key/data pairs. To instantiate a record, you must first declare its type as follows :
 
@@ -15,8 +15,8 @@ type user = {
 And here is how to define an associated record value :
 
 ```
-let alice : user = {
-  id       : 1 as nat,
+const alice : user = {
+  id       : 1n,
   is_admin : true,
   name     : "Alice"
 };
@@ -27,7 +27,7 @@ let alice : user = {
 You can access the whole record or get one key in particular :
 
 ```
-let alice_admin: bool = alice.is_admin;
+const alice_admin: bool = alice.is_admin;
 ```
 
 ## Update
@@ -35,7 +35,7 @@ let alice_admin: bool = alice.is_admin;
 You can modify values in a record as follows :
 
 ```
-let change_name = (u: user): user => ({...u, name: "Mark"});
+const change_name = (u: user): user => ({...u, name: "Mark"});
 ```
 
 ⚠️ Note that user has not been changed by the function. Rather, the function returned a nameless new version of it with the modified name.
@@ -48,7 +48,7 @@ let change_name = (u: user): user => ({...u, name: "Mark"});
 
 <!-- prettier-ignore -->3- Refactor the *modified\_earth\_coordinates* update of the last parameters with the record type.
 
-<!-- prettier-ignore -->⚠️ If you have installed LIGO then you can check the value of the *modified\_earth\_coordinates* variable by running the following command:
+<!-- prettier-ignore -->⚠️ If you have installed LIGO, then you can check the value of the *modified\_earth\_coordinates* variable by running the following command:
 
 ```
 ligo run interpret --init-file exercise.jsligo 'modified_earth_coordinates'
