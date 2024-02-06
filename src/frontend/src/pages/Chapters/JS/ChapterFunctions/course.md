@@ -2,24 +2,24 @@
 
 <dialog character="mechanics">Captain, why are you trying to change the part yourself? Just write a function on the terminal and send it to a droid.</dialog>
 
-LIGO functions are the basic building block of contracts. Each entrypoint of a contract is a function and each smart contract must have at least one function named _main_ that dispatches the control flow to other functions.
+LIGO functions are the basic building block of contracts. Each entrypoint of a contract is a function, and each smart contract must have at least one function named _main_ that dispatches the control flow to other functions.
 
-When calling a function, LIGO makes a copy of the arguments but also the environment variables. Therefore any modification to these will not be reflected outside the scope of the function and will be lost if not explicitly returned by the function.
+When calling a function, LIGO makes a copy of the arguments but also the environment variables. Therefore, any modification to these will not be reflected outside the scope of the function and will be lost if not explicitly returned by the function.
 
 Functions in JsLIGO are defined using the let or const keyword, like other values. The difference is that parameters are provided after the value name, with its type, then followed by the return type.
 
 Here is how you define a basic function that sums two integers:
 
 ```
-let add = (a: int, b: int): int => a + b;
+const add = (a: int, b: int): int => a + b;
 ```
 
 If the body contains more than a single expression, you use block between braces:
 
 ```
-let myFun = (x: int, y: int): int => {
-  let doubleX = x + x;
-  let doubleY = y + y;
+const myFun = (x: int, y: int): int => {
+  const doubleX = x + x;
+  const doubleY = y + y;
   return doubleX + doubleY;
 };
 ```
@@ -29,28 +29,28 @@ Note that JsLIGO, like JavaScript, requires the return keyword to indicate what 
 <!-- prettier-ignore -->By default, LIGO will warn about unused arguments inside functions. In case we do not use an argument, we can use the wildcard _\__ to prevent warnings. Either use _\__ instead of the argument identifier:
 
 ```
-let k = (x: int, _: int) : int => x;
+const k = (x: int, _: int) : int => x;
 ```
 
 or use an identifier starting with wildcard:
 
 ```
-let k = (x: int, _y: int) : int => x;
+const k = (x: int, _y: int) : int => x;
 ```
 
 ## Anonymous functions (a.k.a. lambdas)
 
-It is possible to define functions without assigning them a name. They are useful when you want to pass them as arguments, or assign them to a key in a record or a map.
+It is possible to define functions without assigning them a name. They are useful when you want to pass them as arguments or assign them to a key in a record or a map.
 
 ```
-let increment = (b: int): int => ((a: int): int => a + 1) (b);
-let a: int = increment(1); // a == 2
+const increment = (b: int): int => ((a: int): int => a + 1) (b);
+const a: int = increment(1); // a == 2
 ```
 
 If the example above seems contrived, here is a more common design pattern for lambdas: to be used as parameters to functions. Consider the use case of having a list of integers and mapping the increment function to all its elements.
 
 ```
-let incr_map = (l: list<int>): list<int> => List.map((i: int) => i + 1, l);
+const incr_map = (l: list<int>): list<int> => List.map((i: int) => i + 1, l);
 ```
 
 ## Nested functions (also known as closures)
@@ -58,8 +58,8 @@ let incr_map = (l: list<int>): list<int> => List.map((i: int) => i + 1, l);
 It's possible to place functions inside other functions. These functions have access to variables in the same scope.
 
 ```
-let closure_example = (i: int): int => {
-  let closure = (j: int): int => i + j;
+const closure_example = (i: int): int => {
+  const closure = (j: int): int => i + j;
   return closure(i);
 };
 ```
