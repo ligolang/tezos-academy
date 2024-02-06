@@ -1,17 +1,11 @@
 # Chapter 5 : Strings
 
-<dialog character="mechanics">Red alert captain! When you powered the ship, the engines exploded... Seems like someone sabotaged the igniter! We should find out later. For now, you need to replace the damaged part.</dialog>
+<dialog character="mechanics">Red alert, Captain! When you powered the ship, the engines exploded... Seems like someone sabotaged the igniter! We should find out later. For now, you need to replace the damaged part.</dialog>
 
 Strings are defined using the built-in string type as follows:
 
 ```
 const a: string = "Hello Captain Rogers";
-```
-
-or with single quotes
-
-```
-const a: string = 'Hello Captain Rogers';
 ```
 
 ## Concatenating Strings
@@ -28,15 +22,15 @@ const full_greeting: string = greeting + " " + name;
 
 Strings can be sliced using a built-in function _String.sub_ which takes three parameters:
 
-- an _offset_ describing the index of first character that will be copied
-- the _length_ describing the number of characters that will be copied (starting from the given offset)
-- the _string_ being sliced
+- An _offset_ describing the index of the first character that will be copied.
+- The _length_ describing the number of characters that will be copied (starting from the given offset).
+- The _string_ being sliced.
 
 The function _String.sub_ can be used as follows:
 
 ```
 const name: string = "Captain Rogers";
-const slice: string = String.sub(0 as nat, 1 as nat, name);
+const slice: string = String.sub(0n, 1n, name);
 ```
 
 ⚠️ Notice that the offset and length of the sub function are natural numbers.
@@ -45,7 +39,7 @@ Strings can be concatenated using the + operator.
 
 ```
 const name: string = "Captain Rogers";
-const slice: string = String.sub(8 as nat, 6 as nat, name) + ", welcome on board!";
+const slice: string = String.sub(8n, 6n, name) + ", welcome on board!";
 ```
 
 ## Length of Strings
