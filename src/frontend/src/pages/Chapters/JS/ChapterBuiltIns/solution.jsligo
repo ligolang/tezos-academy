@@ -1,17 +1,13 @@
-let purchase = (purchase_price : tez) : bool => {
-  const ship_address: address = ("tz1TGu6TN5GSez2ndXXeDX6LgUDvLzPLqgYV" as address);
-  const vendor_address: address = ("tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" as address);
+const purchase = (purchase_price : tez) : bool => {
+  const ship_address: address = "tz1TGu6TN5GSez2ndXXeDX6LgUDvLzPLqgYV" as address;
+  const _vendor_address: address = "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" as address;
 
   // Type your solution below
   if (Tezos.get_source() != ship_address) {
-      failwith ("Access denied");
-  } else {
-      unit; 
+      return failwith ("Access denied");
   };
   if (Tezos.get_amount() != purchase_price) {
-      failwith ("Incorrect amount");
-  } else {
-      unit; 
+      return failwith ("Incorrect amount");
   };
   return true;
 };
