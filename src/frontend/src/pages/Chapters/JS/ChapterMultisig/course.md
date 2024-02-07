@@ -87,7 +87,7 @@ const send = (param: message, s: storage) : return_ => {
     if (!Set.mem(Tezos.get_sender(), s.authorized_addresses)) {
         failwith("Unauthorized address");
     } else {
-        unit;
+        return unit;
     };
 
     // check message size against the stored limit
@@ -96,43 +96,43 @@ const send = (param: message, s: storage) : return_ => {
     if (Bytes.length(packed_msg) > s.max_message_size) {
         failwith("Message size exceed maximum limit");
     } else {
-        unit;
+        return unit;
     };
 
     // compute the new set of addresses associated with the message and update counters
     const voters_opt: option<addr_set> = Map.find_opt(packed_msg, s.message_store);
-    const [new_store, proposal_counters_updated] : [addr_set, proposal_counters] = match(voters_opt, {
-        Some: (voters: addr_set) => {
+    const [new_store, proposal_counters_updated] : [addr_set, proposal_counters] = match(voters_opt) {
+        when(Some (voters)): {
             // The message is already stored. Increment the counter only if the sender is not already associated with the message.
             if (Set.mem(Tezos.get_sender(), voters)) {
                 return [Set.empty as addr_set, s.proposal_counters];
             } else {
-                const updated: proposal_counters = match(Map.find_opt(Tezos.get_sender(), s.proposal_counters), {
-                    Some: (count: nat) => Map.update(Tezos.get_sender(), Some(count + (1 as nat)), s.proposal_counters),
-                    None: () => Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
-                });
+                const updated: proposal_counters = match(Map.find_opt(Tezos.get_sender(), s.proposal_counters)) {
+                    when(Some(count)): Map.update(Tezos.get_sender(), Some(count + (1 as nat)), s.proposal_counters);
+                    when(None): Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
+                };
                 return [Set.add(Tezos.get_sender(), voters), updated];
             };
-        },
-        None: () => {
+        };
+        when(None): {
             // the message has never been received before
-            const updated: proposal_counters = match(Map.find_opt(Tezos.get_sender(), s.proposal_counters), {
-                Some: (count: nat) => Map.update(Tezos.get_sender(), Some(count + (1 as nat)), s.proposal_counters),
-                None: () => Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
-            });
+            const updated: proposal_counters = match(Map.find_opt(Tezos.get_sender(), s.proposal_counters)) {
+                when(Some(count)): Map.update(Tezos.get_sender(), Some(count + (1 as nat)), s.proposal_counters);
+                when(None): Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
+            };
             return [Set.add(Tezos.get_sender(), Set.empty as addr_set), updated];
         }
-    });
+    };
 
     // check sender counters against the maximum number of proposal
-    const sender_proposal_counter: nat = match(Map.find_opt(Tezos.get_sender(), proposal_counters_updated), {
-        Some: (count: nat) => count,
-        None: () => 0 as nat
-    });
+    const sender_proposal_counter: nat = match(Map.find_opt(Tezos.get_sender(), proposal_counters_updated)) {
+        when(Some(count)): count;
+        when(None): 0n
+    };
     if (sender_proposal_counter > s.max_proposal) {
         failwith ("Maximum number of proposal reached");
     } else {
-        unit;
+        return unit;
     };
     // check the threshold
     if (Set.size(new_store) >= s.threshold) {
@@ -145,7 +145,7 @@ const send = (param: message, s: storage) : return_ => {
         // decrement the counters
         const decrement = (addr: address, ctr: nat): nat => {
             if (Set.mem(addr, new_store)) {
-                return abs(ctr - (1 as nat));
+                return abs(ctr - 1n);
             } else {
                 return ctr;
             };
@@ -171,23 +171,23 @@ const send = (param: message, s: storage) : return_ => {
 const withdraw = (param: message, s: storage) : return_ => {
     const packed_msg: bytes = Bytes.pack(param);
 
-    return match(Map.find_opt(packed_msg, s.message_store), {
-        Some: (voters: addr_set) => { // The message is stored
+    return match(Map.find_opt(packed_msg, s.message_store)) {
+        when(Some (voters)): { // The message is stored
             const new_set: addr_set = Set.remove(Tezos.get_sender(), voters);
 
             // Decrement the counter only if the sender was already associated with the message
             const proposal_counters_updated: proposal_counters = (() : proposal_counters => {
                if (Set.size(voters) != Set.size(new_set)) {
-                 return match(Map.find_opt(Tezos.get_sender(), s.proposal_counters), {
-                     Some: (count: nat) => Map.update(Tezos.get_sender(), Some(abs(count - (1 as nat))), s.proposal_counters),
-                     None: () => Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
+                 return match(Map.find_opt(Tezos.get_sender(), s.proposal_counters) {
+                     when(Some(count)): Map.update(Tezos.get_sender(), Some(abs(count - 1n)), s.proposal_counters);
+                     when(None): Map.add(Tezos.get_sender(), 1n, s.proposal_counters)
                  });
                } else { return s.proposal_counters; };
             })();
 
             // If the message is left without any associated addresses, remove the corresponding message_store field
             const message_store_updated: message_store = (() : message_store => {
-                if (Set.size(new_set) == (0 as nat)) {
+                if (Set.size(new_set) == 0n) {
                   // remove packed_msg from map s.message_store
                   return Map.update(packed_msg, None() as option<addr_set>, s.message_store);
                 } else {
@@ -200,20 +200,21 @@ const withdraw = (param: message, s: storage) : return_ => {
                 message_store: message_store_updated,
                 proposal_counters: proposal_counters_updated
             }];
-        },
-        None: () => {// The message is not stored, ignore.
+        };
+        when(None): {// The message is not stored, ignore.
             return [list([]) as list<operation>, s];
         }
-    });
+    };
 };
 
 const default_ = (_: unit, s: storage) : return_ => ([list([]) as list<operation>, s]);
 
-const main = (param: parameter, s: storage) : return_ => match(param, {
-    Send: (p: param) => send(p, s),
-    Withdraw: (p: param) => withdraw(p, s),
-    Default: (p: param) => default_(p, s)
-});
+@entry
+const main = (param: parameter, s: storage) : return_ => match(param) {
+    when(Send(p)): send(p, s);
+    when(Withdraw(p)): withdraw(p, s);
+    when(Default(p)): default_(p, s)
+};
 ```
 
 Notice that in the _Send_ function the number of voters is compared to the threshold. If the threshold is reached then:
@@ -236,7 +237,7 @@ if (Set.size(new_store) >= s.threshold) {
     // decrement the counters
     const decrement = (addr: address, ctr: nat): nat => {
         if (Set.mem(addr, new_store)) {
-            return abs(ctr - (1 as nat));
+            return abs(ctr - 1n);
         } else {
             return ctr;
         };
