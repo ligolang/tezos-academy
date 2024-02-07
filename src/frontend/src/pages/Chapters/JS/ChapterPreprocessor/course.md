@@ -1,4 +1,4 @@
-# Chapter 27 : Preprocessor
+# Chapter 26: Preprocessor
 
 <dialog character="mechanics">Our ship is made of modules, you can easily attach or remove external modules, check it out.</dialog>
 
@@ -39,15 +39,15 @@ Pre-processor commands _#if_, _#else_ and _#endif_ allow to consider / ignore so
 
 #include "tzip-12/fa2_interface.jsligo"
 
-const substr_special = (s: string) : string => 
-    String.sub (0 as nat, 4 as nat, s);
+const substr_special = (s: string) : string =>
+    String.sub (0n, 4n, s);
 
 #else
 
 #include "test/fa2_int.jsligo"
 
 const substr_special = (s: string) : string =>
-    String.sub (0 as nat, 3 as nat, s);
+    String.sub (0n, 3n, s);
 
 #endif
 ```
