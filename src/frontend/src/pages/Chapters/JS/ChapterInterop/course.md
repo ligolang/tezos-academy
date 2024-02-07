@@ -1,4 +1,4 @@
-# Chapter 26 : Interoperability with Michelson
+# Chapter 25 : Interoperability with Michelson
 
 <dialog character="pilot">Captain, some ressources are missing from our inventory, you should investigate.</dialog>
 
@@ -32,13 +32,13 @@ When interacting with other contracts the representation (left or right combed) 
 
 In chapters 28 to 30, we will see in detail the Financial Application standard (called FA2) which allows to create a standardized token contract. This FA2 token contract provides a *Transfer* entrypoint for transfering the token ownership between users. This entrypoint requires parameters that must respect a right combed representation of Ligo records.
 
-<!-- prettier-ignore -->For example, if a third-party contract (called *Caller* contract) wants to interact with a FA2 token contract (called *token* contract), it would use the entrypoint *Transfer* which expects parameters with a right combed representation of Ligo records. So, when the *Caller* contract sends a transaction to the *token* contract, it must transform parameters of the called entrypoint into the expected representation.  
+<!-- prettier-ignore -->For example, if a third-party contract (called *Caller* contract) wants to interact with a FA2 token contract (called *token* contract), it would use the entrypoint *Transfer* which expects parameters with a right combed representation of Ligo records. So, when the *Caller* contract sends a transaction to the *token* contract, it must transform parameters of the called entrypoint into the expected representation.
 
 <!-- prettier-ignore -->The snippet of code below is part of the standard FA2 interface, and defines transfer parameters using *[@layout:comb]* annotation for specifying the Michelson representation used by the *Transfer* entrypoint.
 
 ```
-type atomic_trans = 
-// [@layout:comb] 
+type atomic_trans =
+// [@layout:comb]
 {
    to_      : address,
    token_id : nat,
@@ -50,9 +50,9 @@ type transfer_from = {
 };
 type transfer = list<transfer_from>;
 
-type parameter = 
-// [@layout:comb] 
-| Transfer of transfer
+type parameter =
+// [@layout:comb]
+| ["Transfer", transfer]
 ```
 
 We will see in detail the Financial Application standard in chapters 28 to 30.
@@ -92,12 +92,13 @@ type parameter =
   ["Left", int]
 | ["Right", int];
 
+@entry
 const main = (param: parameter, x: storage) : [list<operation>, storage] => [
     list([]) as list<operation>,
-    match(param, {
-        Left: (i: int) => x + i,
-        Right: (i: int) => x - i,
-    })
+    match(param) {
+        when(Left(i)): x + i;
+        when(Right(i)): x - i;
+    }
 ];
 ```
 
@@ -108,11 +109,12 @@ type storage = int;
 type parameter = int;
 type x = | ["Left", int];
 
+@entry
 const main = (_param: parameter, s: storage) : [list<operation>, storage] => {
-    const contract: contract<x> =  match(Tezos.get_entrypoint_opt("%left", "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" as address) as option<contract<x>>, {
-        Some: (c: contract<x>) => c,
-        None: () => failwith("contract does not match")
-    });
+    const contract: contract<x> =  match(Tezos.get_entrypoint_opt("%left", "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" as address) as option<contract<x>>) {
+        when(Some(c)): c;
+        when(None): failwith("contract does not match")
+    };
     return [ list([Tezos.transaction(Left(2), 2 as mutez, contract)]), s];
 };
 ```
@@ -158,7 +160,7 @@ let z: z_or = M_left(unit) as z_or;
 let y_1: y_or = M_left(unit) as y_or;
 let y: z_or = M_right(y_1) as z_or;
 
-let x_pair: x_and = ["foo", [2, 3 as nat]];
+let x_pair: x_and = ["foo", [2, 3n]];
 let x_1: y_or = M_right (x_pair) as y_or;
 let x: z_or = M_right (y_1) as z_or;
 ```
@@ -168,7 +170,7 @@ let x: z_or = M_right (y_1) as z_or;
 By default LIGO translates its datatypes into a alphabetically left balanced tree. So, for example:
 
 ```
-type animal = 
+type animal =
 | ["Elephant"]
 | ["Dog"]
 | ["Cat"];
@@ -177,12 +179,12 @@ type animal =
 will translate to:
 
 ```
-(or 
-  (or 
-    (unit %cat) 
+(or
+  (or
+    (unit %cat)
     (unit %dog)
   )
-  (unit %elephant) 
+  (unit %elephant)
 )
 ```
 
@@ -190,9 +192,9 @@ will translate to:
 
 If you want to change the data representation in Michelson to a location retaining right combed tree, like this:
 ```
-  (or 
-    (unit %elephant) 
-    (or (unit %dog) 
+  (or
+    (unit %elephant)
+    (or (unit %dog)
         (unit %cat)
     )
   )
@@ -211,7 +213,7 @@ type animal =
 The layout:comb annotation can also be used on record types:
 
 ```
-type artist =  
+type artist =
 // @layout:comb
 {
   genre: string,
@@ -227,7 +229,7 @@ type artist =
 If the Michelson annotation should be different from the LIGO representation, the annot:<string> attribute can be used. For example:
 
 ```
-type animal = 
+type animal =
 | /* @annot:memory */ ["Elephant"]
 | /* @annot:face */ ["Dog"]
 | /* @annot:fish */ ["Cat"]
@@ -236,11 +238,11 @@ type animal =
 will result into:
 
 ```
-(or 
-  (or 
-    (unit %fish) 
+(or
+  (or
+    (unit %fish)
     (unit %face)
-  ) 
+  )
   (unit %memory)
 )
 ```
@@ -255,7 +257,7 @@ type artist = {
 }
 ```
 
-If the _layout:comb_ and _annot:<string>_ attributes are not adequate enough for your use case, LIGO has more advanced advanced interop features which we will we discuss next. 
+If the _layout:comb_ and _annot:<string>_ attributes are not adequate enough for your use case, LIGO has more advanced advanced interop features which we will we discuss next.
 
 
 ### Manual data structure conversion
@@ -286,38 +288,32 @@ type test = {
 };
 
 let make_concrete_sum = (r: z_to_v): z_or =>
-  match(r, {
-    Z: () => M_left(unit) as z_or,
-    Y: () => M_right(M_left(unit) as y_or) as z_or,
-    X: () => M_right (M_right (M_left(unit) as x_or) as y_or) as z_or ,
-    W: () => M_right (M_right (M_right(M_left(unit) as w_or_v) as x_or) as y_or) as z_or ,
-    V: () => M_right (M_right (M_right(M_right(unit) as w_or_v) as x_or) as y_or) as z_or 
-  });
+  match(r) {
+    when(Z): M_left(unit) as z_or;
+    when(Y): M_right(M_left(unit) as y_or) as z_or;
+    when(X): M_right (M_right (M_left(unit) as x_or) as y_or) as z_or;
+    when(W): M_right (M_right (M_right(M_left(unit) as w_or_v) as x_or) as y_or) as z_or;
+    when(V): M_right (M_right (M_right(M_right(unit) as w_or_v) as x_or) as y_or) as z_or
+  };
 
 
 let make_concrete_record = (r: test): [string, int, string, bool, int] =>
   [r.z, r.y, r.x, r.w, r.v];
 
 let make_abstract_sum = (z_or: z_or): z_to_v =>
-  match(z_or, {
-    M_left: (n: unit) => Z(),
-    M_right: (y_or: y_or) => {
-      return match(y_or, {
-        M_left: (n: unit) => Y(),
-        M_right: (x_or: x_or) => {
-          return match(x_or, {
-            M_left: (n: unit) => X(),
-            M_right: (w_or: w_or) => {
-              return match(w_or, {
-                M_left: (n: unit) => W(),
-                M_right: (n: unit) => V()
-              })
+  match(z_or) {
+    when(M_left(n)): Z();
+    when(M_right(y_or)): match(y_or) {
+        when(M_left(n)): Y();
+        when(M_right(x_or)): match(x_or) {
+            when(M_left(n)): X();
+            when(M_right(w_or)): match(w_or) {
+                when(M_left(n)): W();
+                when(M_right(n)): V()
             }
-          })
         }
-      })
     }
-  })
+  };
 
 let make_abstract_record = (z: string, y: int, x: string, w: bool, v: int): test =>
   ({ z: z, y, x, w, v })
@@ -330,7 +326,7 @@ Here is a simple contract that changes the item stored in the storage. The contr
 <!-- prettier-ignore -->Take a look at the ligo command that compiles the storage to Michelson :
 
 ```
-ligo compile storage exercise.jsligo "{ name: \"3\", item_id: 2 as nat, cost: 1 as nat }"
+ligo compile storage exercise.jsligo "{ name: \"3\", item_id: 2n, cost: 1n }"
 ```
 
 which outputs to:
@@ -342,5 +338,5 @@ which outputs to:
 You need to create an _item_ type that will produces such output. Use the following storage from command below as a hint:
 
 ```
-{ name: \"3\", item_id: 2 as nat, cost: 1 as nat }
+{ name: \"3\", item_id: 2 n, cost: 1n }
 ```

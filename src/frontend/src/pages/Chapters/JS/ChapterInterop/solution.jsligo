@@ -1,9 +1,9 @@
  // Type your solution below
-type item = 
+type item =
 // @layout:comb
 {
-    cost: nat, 
-    item_id: nat, 
+    cost: nat,
+    item_id: nat,
     name: string
 };
 
@@ -11,11 +11,12 @@ type parameter = | ["ChangeItem", item];
 type storage = item;
 type return_ = [list<operation>, item];
 
-const changeItem = (i: item, _s: storage) : return_ => { 
+const changeItem = (i: item, _s: storage) : return_ => {
     return [list([]) as list<operation>, i];
 };
 
-const main = (p: parameter, s: storage) : return_ => match(p, { 
-    ChangeItem: i => changeItem(i, s) 
-});
+@entry
+const main = (p: parameter, s: storage) : return_ => match(p) {
+    when(ChangeItem(i)): changeItem(i, s)
+};
 
