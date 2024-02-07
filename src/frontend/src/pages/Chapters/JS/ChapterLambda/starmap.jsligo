@@ -31,14 +31,14 @@ type parameter =
 | ["DoNothing"];
 
 const addPlanet = (input: [string, planet], store: storage) : return_ => {
-    const modified: planets = match(Map.find_opt(input[0], store.celestialbodies), {
-        Some: (_p: planets) => failwith("planet already exist"),
-        None: () => Map.add(input[0], { 
-            position: input[1].position, 
-            mass: input[1].mass, 
+    const modified: planets = match(Map.find_opt(input[0], store.celestialbodies)) {
+        when(Some(_p)): failwith("planet already exist");
+        when(None): Map.add(input[0], {
+            position: input[1].position,
+            mass: input[1].mass,
             category: store.func(input[1])
         }, store.celestialbodies)
-    });
+    };
     return [
         (list([]) as list<operation>),
         {
@@ -50,7 +50,7 @@ const addPlanet = (input: [string, planet], store: storage) : return_ => {
 };
 
 const deduceCategoryChange = (f: fn, store: storage) : return_ => {
-    const applyDeduceCatg = (_name: string, p: planet) : planet => ({ 
+    const applyDeduceCatg = (_name: string, p: planet) : planet => ({
         position: p.position,
         mass: p.mass,
         category: f(p)
@@ -62,13 +62,14 @@ const deduceCategoryChange = (f: fn, store: storage) : return_ => {
         {
             name: store.name,
             func: store.func,
-            celestialbodies: modified 
+            celestialbodies: modified
         }
     ];
 };
 
-const main = (action: parameter, store: storage) : return_ => match(action, {
-    AddPlanet: (input: parameter) => addPlanet(input, store),
-    DeduceCategoryChange: (f: parameter) => deduceCategoryChange(f, store),
-    DoNothing: () => [(list([]) as list<operation>), store],
-});
+@entry
+const main = (action: parameter, store: storage) : return_ => match(action) {
+    when(AddPlanet(input)): addPlanet(input, store);
+    when(DeduceCategoryChange(f)): deduceCategoryChange(f, store);
+    when(DoNothing): [(list([]) as list<operation>), store]
+};
