@@ -54,7 +54,7 @@ Let's see an implementation in JsLIGO of a fungible token (FA1.2)
 
 type tokens = big_map<address, nat>;
 type allowances = big_map<[address, address], nat>;
-type storage = 
+type storage =
 // @layout:comb
 {
   tokens       : tokens,
@@ -62,7 +62,7 @@ type storage =
   total_amount : nat,
 };
 
-type transfer = 
+type transfer =
 // @layout:comb
 {
     address_from : address,
@@ -70,14 +70,14 @@ type transfer =
     value        : nat,
 };
 
-type approve = 
+type approve =
 // @layout:comb
 {
     spender : address,
     value   : nat,
 };
 
-type getAllowance = 
+type getAllowance =
 // @layout:comb
 {
     owner    : address,
@@ -85,14 +85,14 @@ type getAllowance =
     callback : contract<nat>
 };
 
-type getBalance = 
+type getBalance =
 // @layout:comb
 {
     owner    : address,
     callback : contract<nat>,
 };
 
-type getTotalSupply = 
+type getTotalSupply =
 // @layout:comb
 {
     callback : contract<nat>,
@@ -108,54 +108,53 @@ type action =
 |    ["GetTotalSupply", getTotalSupply];
 
 const transfer = (p: transfer, s: storage) : return_ => {
-    const new_allowances = (() : allowances => { 
+    const new_allowances = (() : allowances => {
         if (Tezos.get_sender() == p.address_from) {
             return s.allowances;
         } else {
             const authorized_value = match(Big_map.find_opt(
-                [Tezos.get_sender(), p.address_from], s.allowances), {
-                    Some: (value: nat) => value,
-                    None: () => 0 as nat
+                [Tezos.get_sender(), p.address_from], s.allowances)) {
+                    when(Some(value)): value;
+                    when(None): 0n
                 }
-            );
             if (authorized_value < p.value) {
                 failwith("Not Enough Allowance");
-            } else { 
+            } else {
                 return Big_map.update(
                     [Tezos.get_sender(), p.address_from],
-                    Some(abs(authorized_value - p.value)), 
+                    Some(abs(authorized_value - p.value)),
                     s.allowances
                );
             }
         }
     })();
-    const sender_balance = match(Big_map.find_opt(p.address_from, s.tokens), {
-        Some: (value: nat) => value,
-        None: () => 0 as nat
-    });
-    if (sender_balance < p.value) { 
+    const sender_balance = match(Big_map.find_opt(p.address_from, s.tokens)) {
+        when(Some(value)): value;
+        when(None): 0n
+    };
+    if (sender_balance < p.value) {
         failwith("Not Enough Balance") as return_;
     } else {
         let new_tokens = Big_map.update(p.address_from, Some(abs(sender_balance - p.value)), s.tokens);
-        const receiver_balance = match(Big_map.find_opt(p.address_to, s.tokens), {
-            Some: (value: nat) => value,
-            None: () => 0 as nat
-        });
+        const receiver_balance = match(Big_map.find_opt(p.address_to, s.tokens)) {
+            when(Some(value)): value;
+            when(None): 0n
+        };
         new_tokens = Big_map.update(p.address_to, Some(receiver_balance + p.value), new_tokens);
         return [
-            list([]) as list<operation>, 
+            list([]) as list<operation>,
             {...s, tokens: new_tokens, allowances: new_allowances}
         ];
     };
 };
 
 const approve = (p: approve, s: storage) : return_ => {
-    let previous_value = match(Big_map.find_opt([p.spender, Tezos.get_sender()], s.allowances), {
-        Some: (value: nat) => value,
-        None: () => 0 as nat
-    });
+    let previous_value = match(Big_map.find_opt([p.spender, Tezos.get_sender()], s.allowances)) {
+        when(Some(value)): value;
+        when(None): 0n
+    };
     if (previous_value > (0 as nat) && p.value > (0 as nat)) {
-        failwith("Unsafe Allowance Change") as return_; 
+        failwith("Unsafe Allowance Change") as return_;
     } else {
         const new_allowances = Big_map.update([p.spender, Tezos.get_sender()], Some(p.value), s.allowances);
         return [list([]) as list<operation>, { ...s, allowances: new_allowances}];
@@ -163,19 +162,19 @@ const approve = (p: approve, s: storage) : return_ => {
 };
 
 const getAllowance = (p: getAllowance,s: storage) : return_ => {
-    const value = match(Big_map.find_opt([p.owner, p.spender], s.allowances), {
-        Some: (value: nat) => value,
-        None: () => 0 as nat
-    });
+    const value = match(Big_map.find_opt([p.owner, p.spender], s.allowances)) {
+        when(Some(value)): value;
+        when(None): 0n
+    };
     const op = Tezos.transaction(value, 0 as mutez, p.callback);
     return [list([op]) as list<operation>, s];
 };
 
 const getBalance = (p: getBalance, s: storage) : return_ => {
-    const value = match(Big_map.find_opt(p.owner, s.tokens), {
-        Some: (value: nat) => value,
-        None: () => 0 as nat
-    });
+    const value = match(Big_map.find_opt(p.owner, s.tokens)) {
+        when(Some(value)): value;
+        when(None): 0n
+    };
     const op = Tezos.transaction(value, 0 as mutez, p.callback);
     return [list([op]) as list<operation>, s];
 };
@@ -186,13 +185,13 @@ const getTotalSupply = (p: getTotalSupply, s: storage) : return_ => {
     return [list([op]) as list<operation>, s];
 };
 
-const main = (a: action, s: storage) : return_ => match(a, {
-    Transfer: (p: transfer) => transfer(p, s),
-    Approve: (p: approve) => approve(p, s),
-    GetAllowance: (p: getAllowance) => getAllowance(p, s),
-    GetBalance: (p: getBalance) => getBalance(p, s),
-    GetTotalSupply: (p: getTotalSupply) => getTotalSupply(p, s),
-});
+const main = (a: action, s: storage) : return_ => match(a) {
+    when(Transfer(p)): transfer(p, s);
+    when(Approve(p)): approve(p, s);
+    when(GetAllowance(p)): getAllowance(p, s);
+    when(GetBalance(p)): getBalance(p, s);
+    when(GetTotalSupply(p)): getTotalSupply(p, s)
+};
 ```
 
 ## Your mission
