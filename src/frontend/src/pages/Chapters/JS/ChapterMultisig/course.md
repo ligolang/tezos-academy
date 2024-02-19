@@ -41,180 +41,212 @@ A user can invoke the entry point _Send_ of the smart contract _MultisigProxy_ t
 
 ```
 // Counter contract types
-type action =
-  ["Decrement", int]
-| ["Increment", int];
-
+type action = ["Decrement", int] | ["Increment", int]
 // MulitsigProxy storage type
-type addr_set = set<address>;
-type message_store = map<bytes, addr_set>;
-type proposal_counters = map<address, nat>;
-
+type addr_set = set<address>
+type message_store = map<bytes, addr_set>
+type proposal_counters = map<address, nat>
 type storage = {
-    authorized_addresses: addr_set,
-    max_message_size: nat,
-    max_proposal: nat,
-    message_store,
-    proposal_counters,
-    state_hash: bytes,
-    target_contract: address,
-    threshold: nat
-};
-
+  authorized_addresses: addr_set,
+  max_message_size: nat,
+  max_proposal: nat,
+  message_store,
+  proposal_counters,
+  state_hash: bytes,
+  target_contract: address,
+  threshold: nat
+}
 // MulitsigProxy I/O types
-type message = string;
-type return_ = [list<operation>, storage];
-
+type message = string
+type return_ = [list<operation>, storage]
 //MulitsigProxy parameter
-type parameter =
-  ["Default", unit]
-| ["Send", message]
-| ["Withdraw", message];
-
+type parameter = ["Default", unit] | ["Send", message] | ["Withdraw", message]
 // Function executed when {threshold} approvals has been reached
-const execute_action = (str: string, s: storage) : list<operation> => {
-  if(String.sub(1 as nat, 1 as nat, str) == "3") {
-    const ci: contract<action> = Tezos.get_contract_with_error(s.target_contract, "contract not found");
+const execute_action = (str: string, s: storage): list<operation> => {
+  if (String.sub(1 as nat, 1 as nat, str) == "3") {
+    const ci: contract<action> =
+      Tezos.get_contract_with_error(s.target_contract, "contract not found");
     const op: operation = Tezos.transaction(Increment(3), 0 as tez, ci);
     return list([op]);
   } else {
     return list([]) as list<operation>;
   }
-};
-
-const send = (param: message, s: storage) : return_ => {
-    // check sender against the authorized addresses
-    if (!Set.mem(Tezos.get_sender(), s.authorized_addresses)) {
-        failwith("Unauthorized address");
-    } else {
-        return unit;
-    };
-
-    // check message size against the stored limit
-    const msg: message = param;
-    const packed_msg: bytes = Bytes.pack(msg);
-    if (Bytes.length(packed_msg) > s.max_message_size) {
-        failwith("Message size exceed maximum limit");
-    } else {
-        return unit;
-    };
-
-    // compute the new set of addresses associated with the message and update counters
-    const voters_opt: option<addr_set> = Map.find_opt(packed_msg, s.message_store);
-    const [new_store, proposal_counters_updated] : [addr_set, proposal_counters] = match(voters_opt) {
-        when(Some (voters)): {
-            // The message is already stored. Increment the counter only if the sender is not already associated with the message.
-            if (Set.mem(Tezos.get_sender(), voters)) {
-                return [Set.empty as addr_set, s.proposal_counters];
-            } else {
-                const updated: proposal_counters = match(Map.find_opt(Tezos.get_sender(), s.proposal_counters)) {
-                    when(Some(count)): Map.update(Tezos.get_sender(), Some(count + (1 as nat)), s.proposal_counters);
-                    when(None): Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
-                };
-                return [Set.add(Tezos.get_sender(), voters), updated];
-            };
-        };
-        when(None): {
-            // the message has never been received before
-            const updated: proposal_counters = match(Map.find_opt(Tezos.get_sender(), s.proposal_counters)) {
-                when(Some(count)): Map.update(Tezos.get_sender(), Some(count + (1 as nat)), s.proposal_counters);
-                when(None): Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
-            };
-            return [Set.add(Tezos.get_sender(), Set.empty as addr_set), updated];
-        }
-    };
-
-    // check sender counters against the maximum number of proposal
-    const sender_proposal_counter: nat = match(Map.find_opt(Tezos.get_sender(), proposal_counters_updated)) {
-        when(Some(count)): count;
-        when(None): 0n
-    };
-    if (sender_proposal_counter > s.max_proposal) {
-        failwith ("Maximum number of proposal reached");
-    } else {
-        return unit;
-    };
-    // check the threshold
-    if (Set.size(new_store) >= s.threshold) {
-        // remove packed_msg from map s.message_store;
-        const message_store_updated: message_store = Map.update(packed_msg, None() as option<addr_set>, s.message_store);
-        // trigger action execution
-        const ret_ops: list<operation> = execute_action(msg, s);
-        // update the state hash
-        const new_state_hash: bytes = Crypto.sha256(Bytes.concat(s.state_hash, packed_msg));
-        // decrement the counters
-        const decrement = (addr: address, ctr: nat): nat => {
-            if (Set.mem(addr, new_store)) {
-                return abs(ctr - 1n);
-            } else {
-                return ctr;
-            };
-        };
-        let decremented_proposal_counters: proposal_counters = Map.map(decrement, proposal_counters_updated);
-        return [ ret_ops, {
-            ...s,
-            proposal_counters:
-            decremented_proposal_counters,
-            state_hash: new_state_hash,
-            message_store: message_store_updated
-        }];
-    } else {
-        // update map s.message_store with (packed_msg, new_store);
-        return [ list([]) as list<operation>, {
-            ...s,
-            proposal_counters: proposal_counters_updated,
-            message_store: Map.update(packed_msg, Some(new_store), s.message_store)
-        }];
-    };
 }
-
-const withdraw = (param: message, s: storage) : return_ => {
-    const packed_msg: bytes = Bytes.pack(param);
-
-    return match(Map.find_opt(packed_msg, s.message_store)) {
-        when(Some (voters)): { // The message is stored
-            const new_set: addr_set = Set.remove(Tezos.get_sender(), voters);
-
-            // Decrement the counter only if the sender was already associated with the message
-            const proposal_counters_updated: proposal_counters = (() : proposal_counters => {
-               if (Set.size(voters) != Set.size(new_set)) {
-                 return match(Map.find_opt(Tezos.get_sender(), s.proposal_counters) {
-                     when(Some(count)): Map.update(Tezos.get_sender(), Some(abs(count - 1n)), s.proposal_counters);
-                     when(None): Map.add(Tezos.get_sender(), 1n, s.proposal_counters)
-                 });
-               } else { return s.proposal_counters; };
-            })();
-
-            // If the message is left without any associated addresses, remove the corresponding message_store field
-            const message_store_updated: message_store = (() : message_store => {
-                if (Set.size(new_set) == 0n) {
-                  // remove packed_msg from map s.message_store
-                  return Map.update(packed_msg, None() as option<addr_set>, s.message_store);
-                } else {
-                  return Map.update(packed_msg, Some(new_set), s.message_store);
-                }
-            })();
-
-            return [list([]) as list<operation>, {
-                ...s,
-                message_store: message_store_updated,
-                proposal_counters: proposal_counters_updated
-            }];
-        };
-        when(None): {// The message is not stored, ignore.
-            return [list([]) as list<operation>, s];
+const send = (param: message, s: storage): return_ => {
+  // check sender against the authorized addresses
+  if (! Set.mem(Tezos.get_sender(), s.authorized_addresses)) {
+    failwith("Unauthorized address");
+  }
+  // check message size against the stored limit
+  const msg: message = param;
+  const packed_msg: bytes = Bytes.pack(msg);
+  if (Bytes.length(packed_msg) > s.max_message_size) {
+    failwith("Message size exceed maximum limit");
+  }
+  // compute the new set of addresses associated with the message and update counters
+  const voters_opt: option<addr_set> = Map.find_opt(packed_msg, s.message_store);
+  const [new_store, proposal_counters_updated]: [addr_set, proposal_counters] =
+    match(voters_opt) {
+      when (Some(voters)):
+        do {
+          // The message is already stored. Increment the counter only if the sender is not already associated with the message.
+          if (Set.mem(Tezos.get_sender(), voters)) {
+            return [Set.empty as addr_set, s.proposal_counters];
+          } else {
+            const updated: proposal_counters =
+              match(Map.find_opt(Tezos.get_sender(), s.proposal_counters)) {
+                when (Some(count)):
+                  Map.update(
+                    Tezos.get_sender(),
+                    Some(count + (1 as nat)),
+                    s.proposal_counters
+                  )
+                when (None()):
+                  Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
+              };
+            return [Set.add(Tezos.get_sender(), voters), updated];
+          };
+        }
+      when (None()):
+        do {
+          // the message has never been received before
+          const updated: proposal_counters =
+            match(Map.find_opt(Tezos.get_sender(), s.proposal_counters)) {
+              when (Some(count)):
+                Map.update(
+                  Tezos.get_sender(),
+                  Some(count + (1 as nat)),
+                  s.proposal_counters
+                )
+              when (None()):
+                Map.add(Tezos.get_sender(), 1 as nat, s.proposal_counters)
+            };
+          return [Set.add(Tezos.get_sender(), Set.empty as addr_set), updated];
         }
     };
-};
+  // check sender counters against the maximum number of proposal
+  const sender_proposal_counter: nat =
+    match(Map.find_opt(Tezos.get_sender(), proposal_counters_updated)) {
+      when (Some(count)):
+        count
+      when (None()):
+        0n
+    };
+  if (sender_proposal_counter > s.max_proposal) {
+    failwith("Maximum number of proposal reached");
+  }
+  // check the threshold
+  if (Set.size(new_store) >= s.threshold) {
+    // remove packed_msg from map s.message_store;
+    const message_store_updated: message_store =
+      Map.update(packed_msg, None() as option<addr_set>, s.message_store);
+    // trigger action execution
+    const ret_ops: list<operation> = execute_action(msg, s);
+    // update the state hash
+    const new_state_hash: bytes =
+      Crypto.sha256(Bytes.concat(s.state_hash, packed_msg));
+    // decrement the counters
+    const decrement = ([addr, ctr]: [address, nat]): nat => {
+      if (Set.mem(addr, new_store)) {
+        return abs(ctr - 1n);
+      } else {
+        return ctr;
+      };
+    };
+    let decremented_proposal_counters: proposal_counters =
+      Map.map(decrement, proposal_counters_updated);
+    return [
+      ret_ops,
+      {
+        ...s,
+        proposal_counters: decremented_proposal_counters,
+        state_hash: new_state_hash,
+        message_store: message_store_updated
+      }
+    ];
+  } else {
+    // update map s.message_store with (packed_msg, new_store);
+    return [
+      list([]) as list<operation>,
+      {
+        ...s,
+        proposal_counters: proposal_counters_updated,
+        message_store: Map.update(packed_msg, Some(new_store), s.message_store)
+      }
+    ];
+  };
+}
+const withdraw = (param: message, s: storage): return_ => {
+  const packed_msg: bytes = Bytes.pack(param);
+  return match(Map.find_opt(packed_msg, s.message_store)) {
+    when (Some(voters)):
+      do { // The message is stored
 
-const default_ = (_: unit, s: storage) : return_ => ([list([]) as list<operation>, s]);
-
+        const new_set: addr_set = Set.remove(Tezos.get_sender(), voters);
+        // Decrement the counter only if the sender was already associated with the message
+        const proposal_counters_updated: proposal_counters =
+          (
+            (): proposal_counters => {
+              if (Set.size(voters) != Set.size(new_set)) {
+                return match(
+                  Map.find_opt(Tezos.get_sender(), s.proposal_counters)
+                ) {
+                  when (Some(count)):
+                    Map.update(
+                      Tezos.get_sender(),
+                      Some(abs(count - 1n)),
+                      s.proposal_counters
+                    )
+                  when (None()):
+                    Map.add(Tezos.get_sender(), 1n, s.proposal_counters)
+                };
+              } else {
+                return s.proposal_counters;
+              };
+            }
+          )();
+        // If the message is left without any associated addresses, remove the corresponding message_store field
+        const message_store_updated: message_store =
+          (
+            (): message_store => {
+              if (Set.size(new_set) == 0n) {
+                // remove packed_msg from map s.message_store
+                return Map.update(
+                  packed_msg,
+                  None() as option<addr_set>,
+                  s.message_store
+                );
+              } else {
+                return Map.update(packed_msg, Some(new_set), s.message_store);
+              }
+            }
+          )();
+        return [
+          list([]) as list<operation>,
+          {
+            ...s,
+            message_store: message_store_updated,
+            proposal_counters: proposal_counters_updated
+          }
+        ];
+      }
+    when (None()):
+      [list([]) as list<operation>, s]
+  };
+}
+const default_ = (_: unit, s: storage): return_ =>
+  ([list([]) as list<operation>, s])
 @entry
-const main = (param: parameter, s: storage) : return_ => match(param) {
-    when(Send(p)): send(p, s);
-    when(Withdraw(p)): withdraw(p, s);
-    when(Default(p)): default_(p, s)
-};
+const main = (param: parameter, s: storage): return_ =>
+  match(param) {
+    when (Send(p)):
+      send(p, s)
+    when (Withdraw(p)):
+      withdraw(p, s)
+    when (Default(p)):
+      default_(p, s)
+  };
+
 ```
 
 Notice that in the _Send_ function the number of voters is compared to the threshold. If the threshold is reached then:
@@ -227,29 +259,35 @@ Notice that in the _Send_ function the number of voters is compared to the thres
 
 ```
 // check the threshold
+// check the threshold
 if (Set.size(new_store) >= s.threshold) {
     // remove packed_msg from map s.message_store;
-    const message_store_updated: message_store = Map.update(packed_msg, None() as option<addr_set>, s.message_store);
+    const message_store_updated: message_store =
+        Map.update(packed_msg, None() as option<addr_set>, s.message_store);
     // trigger action execution
     const ret_ops: list<operation> = execute_action(msg, s);
     // update the state hash
-    const new_state_hash: bytes = Crypto.sha256(Bytes.concat(s.state_hash, packed_msg));
+    const new_state_hash: bytes =
+        Crypto.sha256(Bytes.concat(s.state_hash, packed_msg));
     // decrement the counters
-    const decrement = (addr: address, ctr: nat): nat => {
+    const decrement = ([addr, ctr]: [address, nat]): nat => {
         if (Set.mem(addr, new_store)) {
-            return abs(ctr - 1n);
+        return abs(ctr - 1n);
         } else {
-            return ctr;
+        return ctr;
         };
     };
-    let decremented_proposal_counters: proposal_counters = Map.map(decrement, proposal_counters_updated);
-    return [ ret_ops, {
+    let decremented_proposal_counters: proposal_counters =
+        Map.map(decrement, proposal_counters_updated);
+    return [
+        ret_ops,
+        {
         ...s,
-        proposal_counters:
-        decremented_proposal_counters,
+        proposal_counters: decremented_proposal_counters,
         state_hash: new_state_hash,
         message_store: message_store_updated
-    }];
+        }
+    ];
 }
 ```
 

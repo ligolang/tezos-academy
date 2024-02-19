@@ -41,9 +41,7 @@ const send = (param: message, s: storage) : return_ => {
     // check sender against the authorized addresses
     if (!Set.mem(Tezos.get_sender(), s.authorized_addresses)) {
         failwith("Unauthorized address");
-    } else {
-        return unit;
-    };
+    }
 
     // check message size against the stored limit
     const msg: message = param;
@@ -52,7 +50,7 @@ const send = (param: message, s: storage) : return_ => {
     // compute the new set of addresses associated with the message and update counters
     const voters_opt: option<addr_set> = Map.find_opt(packed_msg, s.message_store);
     const new_voters : addr_set = match(voters_opt) {
-        when(Some(voters)): {
+        when(Some(voters)): do {
             // The message is already stored. Increment the counter only if the sender is not already associated with the message.
             if (Set.mem(Tezos.get_sender(), voters)) {
                 return Set.empty as addr_set;
@@ -60,9 +58,7 @@ const send = (param: message, s: storage) : return_ => {
                 return Set.add(Tezos.get_sender(), voters);
             };
         };
-        when(None): {
-            return Set.add(Tezos.get_sender(), Set.empty as addr_set);
-        }
+        when(None): Set.add(Tezos.get_sender(), Set.empty as addr_set);
     };
 
     // check the threshold
@@ -73,7 +69,10 @@ const send = (param: message, s: storage) : return_ => {
         const ret_ops: list<operation> = execute_action(msg, s);
         // update reputation
         // Modify the code below
-        const increment = (acc: reputation, addr: address) : reputation => acc;
+        const increment = ([acc, addr]: [reputation, address]) : reputation => match(Map.find_opt(addr, acc)) {
+            when(Some(count)) : Map.update(addr, Some(count + (1 as nat)), acc)
+            when(None) : Map.add(addr, 1 as nat,  acc)
+        };        
         const reputation_updated : reputation = s.reputation;
         return [ ret_ops, {
             ...s,
@@ -93,7 +92,7 @@ const withdraw = (param: message, s: storage) : return_ => {
     const packed_msg: bytes = Bytes.pack(param);
 
     return match(Map.find_opt(packed_msg, s.message_store)) {
-        when(Some(voters)): { // The message is stored
+        when(Some(voters)): do { // The message is stored
             const new_set: addr_set = Set.remove(Tezos.get_sender(), voters);
 
             // If the message is left without any associated addresses, remove the corresponding message_store field
@@ -111,9 +110,7 @@ const withdraw = (param: message, s: storage) : return_ => {
                 message_store: message_store_updated,
             }];
         };
-        when(None): {// The message is not stored, ignore.
-            return [list([]) as list<operation>, s];
-        }
+        when(None): [list([]) as list<operation>, s];
     };
 }
 
