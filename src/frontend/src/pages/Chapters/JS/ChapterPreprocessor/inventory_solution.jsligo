@@ -5,8 +5,7 @@
 const removeFirst = (str: string) : string =>
     String.sub (0n, 1n, str);
 
-let doSomethingInventory = (str: string) : string => {
-    // Type your solution below
+const doSomethingInventory = (str: string) : string => {
 #if EXTRA
     return doSomethingExtra(str);
 #else

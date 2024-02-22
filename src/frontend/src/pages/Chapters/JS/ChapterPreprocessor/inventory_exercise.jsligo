@@ -5,7 +5,7 @@
 const removeFirst = (str: string) : string =>
     String.sub (0n, 1n, str);
 
-let doSomethingInventory = (str: string) : string => {
+const doSomethingInventory = (str: string) : string => {
     // Type your solution below
 };
 

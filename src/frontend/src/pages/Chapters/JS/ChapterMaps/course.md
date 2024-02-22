@@ -17,19 +17,19 @@ type balances = map<string, nat>;
 To create an empty map :
 
 ```
-let empty: balances = Map.empty;
+const empty: balances = Map.empty;
 ```
 
 ℹ️ An empty map must be cast to the right type. More on this later.
 
 ```
-let empty: balances = (Map.empty as map<string, nat>);
+const empty: balances = (Map.empty as map<string, nat>);
 ```
 
 To create a non-empty map:
 
 ```
-let moves: balances = Map.literal(list([
+const moves: balances = Map.literal(list([
     ["tim", 5n],
     ["mark", 0n]
 ]));
@@ -43,7 +43,7 @@ let moves: balances = Map.literal(list([
 Use the *Map.find_opt* built-in function to read a value of the map :
 
 ```
-let my_balance: option<nat> = Map.find_opt("tim", moves);
+const my_balance: option<nat> = Map.find_opt("tim", moves);
 ```
 
 ℹ️ The keyword option indicates that this value is optional. More on this later.
@@ -53,7 +53,7 @@ let my_balance: option<nat> = Map.find_opt("tim", moves);
 The values of a map can be updated using the _Map.update_ built-in function:
 
 ```
-let user_balances: balances = Map.update("tim", Some(14n), moves);
+const user_balances: balances = Map.update("tim", Some(14n), moves);
 ```
 
 ## Insertion
@@ -61,7 +61,7 @@ let user_balances: balances = Map.update("tim", Some(14n), moves);
 To add a new value in the map, use the _Map.add_ function:
 
 ```
-let user_balances: balances = Map.add("ed", 39n, moves);
+const user_balances: balances = Map.add("ed", 39n, moves);
 ```
 
 ## Removal
