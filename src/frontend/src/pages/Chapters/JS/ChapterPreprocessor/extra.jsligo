@@ -2,7 +2,7 @@
 
 #define EXTRA
 
-const doSomethingExtra = (str: string) : string => String.sub(0 as nat, 2 as nat, str);
+const doSomethingExtra = (str: string) : string => String.sub(0n, 2n, str);
 
 #endif
 

@@ -6,7 +6,7 @@ type planet = {
     atmospheric_activity: bool
 };
 
-let star_map: list<planet> = list([
+const star_map: list<planet> = list([
     {
       name: "Earth",
       position: [0,0,0],
@@ -36,21 +36,21 @@ let star_map: list<planet> = list([
       position: [234,8045,435],
       density: 11 as nat,
       atmospheric_activity: true
-   } 
+   }
 ]);
 
-let scan = (l : list<planet>) : planet => {
+const scan = (l : list<planet>) : planet => {
   let destination: planet = {
-      name: "", 
+      name: "",
       position: [0,0,0],
-      density: 0 as nat, 
+      density: 0 as nat,
       atmospheric_activity: false
   };
   // Type your solution below
   for (const i of l) {
       if (i.density > (100 as nat) && i.atmospheric_activity) {
         destination = i
-      } else { unit; }
+      }
   }
   return destination;
 };

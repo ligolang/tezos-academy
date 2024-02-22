@@ -1,5 +1,4 @@
 ligo run dry-run starmap.jsligo \
-// Type your solution below
 'DeduceCategoryChange((p: planet): planet_type => {
     if (p.position.x == 0 && p.position.y == 0 && p.position.z == 0) {
         return STAR();

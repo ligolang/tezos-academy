@@ -1,27 +1,27 @@
 # Chapter 15 : Addresses
 
-<dialog character="mechanics">The scan showed some unusual activity on the planet Osiris, it's likely we will find Xenomorph activity there. We should gear up first. I suggest we stop by a weapon merchant. Here is the address.</dialog>
+<dialog character="mechanics">The scan showed some unusual activity on the planet Osiris; it's likely we will find Xenomorph activity there. We should gear up first. I suggest we stop by a weapon merchant. Here is the address.</dialog>
 
 ## Casting
 
-You can cast a type into another type if you are sure they are compatible :
+You can cast a type into another type if you are sure they are compatible:
 
 ```
-let a: int = int(1 as nat);
-const b : nat = abs (-3);
+const a : int = int(1n);
+const b : nat = abs(-3);
 ```
 
-⚠️ You will not see a transpilation error if the types are not compatible but the execution will fail.
+⚠️ You will not see a transpilation error if the types are not compatible, but the execution will fail.
 
 ## Addresses
 
-You can define Tezos addresses by casting a string to an address type :
+You can define Tezos addresses by casting a string to an address type:
 
 ```
-const my_account: address = ("tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" as address);
+const my_account: address = "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" as address;
 ```
 
-⚠️ You will not see a transpilation error if the address you enter is wrong but the execution will fail.
+⚠️ You will not see a transpilation error if the address you enter is wrong, but the execution will fail.
 
 ## Your mission
 

@@ -1,4 +1,4 @@
-# Chapter 26 : Interoperability with Michelson
+# Chapter 25 : Interoperability with Michelson
 
 <dialog character="pilot">Captain, some ressources are missing from our inventory, you should investigate.</dialog>
 
@@ -32,14 +32,14 @@ When interacting with other contracts the representation (left or right combed) 
 
 In chapters 28 to 30,  we will see in detail the Financial Application standard (called FA2) which allows to create a standardized token contract. This FA2 token contract provides a *Transfer* entrypoint for transfering the token ownership between users. This entrypoint requires parameters that must respect a right combed representation of Ligo records.
 
-<!-- prettier-ignore -->For example, if a third-party contract (called *Caller* contract) wants to interact with a FA2 token contract (called *token* contract), it would use the entrypoint *Transfer* which expects parameters with a right combed representation of Ligo records. So, when the *Caller* contract sends a transaction to the *token* contract, it must transform parameters of the called entrypoint into the expected representation.  
+<!-- prettier-ignore -->For example, if a third-party contract (called *Caller* contract) wants to interact with a FA2 token contract (called *token* contract), it would use the entrypoint *Transfer* which expects parameters with a right combed representation of Ligo records. So, when the *Caller* contract sends a transaction to the *token* contract, it must transform parameters of the called entrypoint into the expected representation.
 
 <!-- prettier-ignore -->The snippet of code below is part of the standard FA2 interface, and defines transfer parameters using *michelson\_pair\_right\_comb* function for specifying the Michelson representation used by the *Transfer* entrypoint.
 
 ```
 type transferMichelson = michelson_pair_right_comb(transferAuxiliary);
 type transferParameter = list(transferMichelson);
-type parameter = 
+type parameter =
 | Transfer(transferParameter)
 ```
 

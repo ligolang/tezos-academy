@@ -1,4 +1,4 @@
-# Chapter 27 : Preprocessor
+# Chapter 26 : Preprocessor
 
 <dialog character="mechanics">Our ship is made of modules, you can easily attach or remove external modules, check it out.</dialog>
 

@@ -10,14 +10,15 @@ type storage = {
 
 type return_ = [list<operation>, storage];
 
-let action_A = (input_string: string, store: storage): return_ =>
+const action_A = (input_string: string, store: storage): return_ =>
   [(list([]) as list<operation>), {...store, stored_string_A: input_string}];
 
-let action_B = (input_string: string, store: storage): return_ =>
+const action_B = (input_string: string, store: storage): return_ =>
   [(list([]) as list<operation>), {...store, stored_string_B: input_string}];
 
-let main = (action: parameter, store: storage): return_ =>
-  match(action, {
-    Action_A: (input_string: string) => action_A(input_string, store),
-    Action_B: (input_string: string) => action_B(input_string, store)
-  });
+@entry
+const main = (action: parameter, store: storage): return_ =>
+  match(action) {
+    when(Action_A(input_string)): action_A(input_string, store);
+    when(Action_B(input_string)): action_B(input_string, store)
+  };
